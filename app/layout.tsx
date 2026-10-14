@@ -9,10 +9,10 @@ export const viewport: Viewport = {
   maximumScale: 5,
 };
 
+const siteUrl = "https://dsasheeeet.vercel.app";
+
 export const metadata: Metadata = {
-  metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL || "https://dsa-tracker.local",
-  ),
+  metadataBase: new URL(siteUrl),
   title: {
     default: "DSA Tracker - 41 Patterns & 820 Curated LeetCode Problems",
     template: "%s | DSA Tracker",
@@ -60,6 +60,7 @@ export const metadata: Metadata = {
         url: "/og-image.jpg",
         width: 1200,
         height: 675,
+        type: "image/jpeg",
         alt: "DSA Tracker - 3D Smoked Glass and Titanium Curly Brackets with Emerald Constellations",
       },
     ],
@@ -98,10 +99,17 @@ export default function RootLayout({
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="icon" href="/icon.png" type="image/png" sizes="512x512" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        <meta property="og:image" content="/og-image.jpg" />
+        <meta property="og:image:secure_url" content="/og-image.jpg" />
+        <meta property="og:image:type" content="image/jpeg" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="675" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:image" content="/og-image.jpg" />
       </head>
       <body className="bg-[#101113] text-[#F3F4F6] min-h-screen antialiased selection:bg-emerald-900/40 selection:text-emerald-200">
-        <Analytics />
         {children}
+        <Analytics />
       </body>
     </html>
   );

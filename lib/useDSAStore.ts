@@ -1,8 +1,16 @@
+'use client';
+
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { db } from './db';
 import { seedDatabaseIfEmpty } from './seed';
 import { Topic, Problem, DifficultyFilter, StatusFilter, SortOption, Difficulty } from './types';
 import { validateNote, checkStorageQuota, StorageStatus } from './storageSafety';
+import {
+  getStoredCompletedMap,
+  saveStoredCompletedStatus,
+  getStoredNotesMap,
+  saveStoredNote,
+} from './storageSync';
 
 export function useDSAStore() {
   const [topics, setTopics] = useState<Topic[]>([]);
@@ -18,7 +26,7 @@ export function useDSAStore() {
   const [dbError, setDbError] = useState<string | null>(null);
   const [storageStatus, setStorageStatus] = useState<StorageStatus | null>(null);
 
-  // Load from Dexie and seed if empty
+  // Load from Dexie + localStorage and seed if empty
   const loadData = useCallback(async () => {
     try {
       setIsLoading(true);
@@ -27,8 +35,28 @@ export function useDSAStore() {
       const loadedTopics = await db.topics.orderBy('order').toArray();
       const loadedProblems = await db.problems.orderBy('order').toArray();
 
+      // Read fast synchronous localStorage backup
+      const localCompletedMap = getStoredCompletedMap();
+      const localNotesMap = getStoredNotesMap();
+
+      // Merge: ensure any status ticked in browser is guaranteed to reflect
+      const mergedProblems = loadedProblems.map((p) => {
+        const isCompleted = localCompletedMap[p.id] !== undefined
+          ? localCompletedMap[p.id]
+          : p.completed;
+        const notes = localNotesMap[p.id] !== undefined
+          ? localNotesMap[p.id]
+          : (p.notes || '');
+
+        return {
+          ...p,
+          completed: Boolean(isCompleted),
+          notes,
+        };
+      });
+
       setTopics(loadedTopics);
-      setProblems(loadedProblems);
+      setProblems(mergedProblems);
 
       // Default selected topic to first available if current invalid
       if (loadedTopics.length > 0) {
@@ -39,6 +67,7 @@ export function useDSAStore() {
           return loadedTopics[0].id;
         });
       }
+
       // Check browser storage health
       const status = await checkStorageQuota();
       setStorageStatus(status);
@@ -107,20 +136,27 @@ export function useDSAStore() {
 
   // Problem actions
   const toggleComplete = useCallback(async (problemId: string) => {
-    let nextStatus = false;
     const now = Date.now();
+    let nextStatus = false;
 
-    setProblems((prev) =>
-      prev.map((p) => {
-        if (p.id === problemId) {
-          nextStatus = !p.completed;
-          return { ...p, completed: nextStatus, updatedAt: now };
-        }
-        return p;
-      })
-    );
+    setProblems((prev) => {
+      const current = prev.find((p) => p.id === problemId);
+      nextStatus = current ? !current.completed : true;
 
-    await db.problems.update(problemId, { completed: nextStatus, updatedAt: now });
+      // 1. Immediately and synchronously write to localStorage
+      saveStoredCompletedStatus(problemId, nextStatus);
+
+      return prev.map((p) =>
+        p.id === problemId ? { ...p, completed: nextStatus, updatedAt: now } : p
+      );
+    });
+
+    // 2. Persist to Dexie IndexedDB
+    try {
+      await db.problems.update(problemId, { completed: nextStatus, updatedAt: now });
+    } catch (err) {
+      console.warn('Dexie update problem complete failed (localStorage is safe):', err);
+    }
   }, []);
 
   const updateNotes = useCallback(async (problemId: string, notes: string) => {
@@ -131,10 +167,21 @@ export function useDSAStore() {
     }
 
     const now = Date.now();
+
+    // 1. Immediately write to localStorage
+    saveStoredNote(problemId, notes);
+
+    // 2. Update React state
     setProblems((prev) =>
       prev.map((p) => (p.id === problemId ? { ...p, notes, updatedAt: now } : p))
     );
-    await db.problems.update(problemId, { notes, updatedAt: now });
+
+    // 3. Persist to Dexie IndexedDB
+    try {
+      await db.problems.update(problemId, { notes, updatedAt: now });
+    } catch (err) {
+      console.warn('Dexie update notes failed (localStorage is safe):', err);
+    }
 
     // Periodically re-check storage estimate
     if (Math.random() < 0.2) {
@@ -227,27 +274,22 @@ export function useDSAStore() {
 
   // Filtered and sorted problems for active view
   const displayedProblems = useMemo(() => {
-    // 1. Filter by selected topic (unless search has text and user wants to match across, but spec: "Selecting a topic displays its associated problems. Search: Match problem names. Work together with topic selection and difficulty filters.")
     let list = problems.filter((p) => p.topicId === selectedTopicId);
 
-    // 2. Filter by search query
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase().trim();
       list = list.filter((p) => p.title.toLowerCase().includes(q));
     }
 
-    // 3. Filter by difficulty
     if (difficultyFilter !== 'all') {
       list = list.filter((p) => p.difficulty === difficultyFilter);
     }
 
-    // 4. Filter by completion status
     if (statusFilter !== 'all') {
       const isCompleted = statusFilter === 'completed';
       list = list.filter((p) => p.completed === isCompleted);
     }
 
-    // 5. Sorting (without mutating original stored order)
     const result = [...list];
     const difficultyWeights: Record<Difficulty, number> = {
       easy: 1,

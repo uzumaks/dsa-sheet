@@ -1,6 +1,7 @@
 import { DSADatabase } from './db';
 import { Topic, Problem } from './types';
 import seedData from './seedData.json';
+import { getStoredCompletedMap, getStoredNotesMap } from './storageSync';
 
 export async function seedDatabaseIfEmpty(db: DSADatabase): Promise<void> {
   const currentProblemCount = await db.problems.count();
@@ -11,8 +12,10 @@ export async function seedDatabaseIfEmpty(db: DSADatabase): Promise<void> {
     return;
   }
 
-  // If there are existing records (e.g. from previous small seed), preserve user work!
+  // Preserve user work from both existing DB records and localStorage
   const existingNotesAndStatus = new Map<string, { completed: boolean; notes: string }>();
+  const localCompletedMap = getStoredCompletedMap();
+  const localNotesMap = getStoredNotesMap();
 
   if (currentProblemCount > 0) {
     const existingProblems = await db.problems.toArray();
@@ -39,6 +42,8 @@ export async function seedDatabaseIfEmpty(db: DSADatabase): Promise<void> {
   const problemsToInsert: Problem[] = seedData.problems.map((p) => {
     const key = p.url ? p.url.toLowerCase() : p.title.toLowerCase();
     const preserved = existingNotesAndStatus.get(key);
+    const localCompleted = localCompletedMap[p.id];
+    const localNote = localNotesMap[p.id];
 
     return {
       id: p.id,
@@ -46,8 +51,8 @@ export async function seedDatabaseIfEmpty(db: DSADatabase): Promise<void> {
       title: p.title,
       url: p.url,
       difficulty: p.difficulty as 'easy' | 'medium' | 'hard',
-      completed: preserved?.completed ?? false,
-      notes: preserved?.notes ?? '',
+      completed: localCompleted !== undefined ? localCompleted : (preserved?.completed ?? false),
+      notes: localNote !== undefined ? localNote : (preserved?.notes ?? ''),
       order: p.order,
       createdAt: now,
       updatedAt: now,
