@@ -84,37 +84,37 @@ export function NotesEditor({ problemId, initialNotes, onSaveNotes }: NotesEdito
   const isNearLimit = charsLeft < 1000;
 
   return (
-    <div className="bg-[#131417] border-t border-[#232428] px-4 py-3 sm:px-6 transition-all duration-200">
-      <div className="flex items-center justify-between pb-1.5 text-[11px] text-gray-400">
-        <span className="font-medium tracking-wide text-gray-400 uppercase">
+    <div className="bg-[#131417] border-t border-[#232428] px-4 py-3.5 sm:px-6 sm:py-4 transition-all duration-200">
+      <div className="flex items-center justify-between pb-2 text-xs sm:text-[13px] text-gray-400">
+        <span className="font-medium tracking-wide text-gray-400 uppercase text-[11px] sm:text-xs">
           Personal Notes &amp; Intuition
         </span>
         <div className="flex items-center gap-3">
           {saveStatus === 'saving' && (
-            <span className="flex items-center gap-1 text-amber-400/90 text-[11px]">
-              <Loader2 className="w-3 h-3 animate-spin" />
+            <span className="flex items-center gap-1 text-amber-400/90 text-xs sm:text-[13px]">
+              <Loader2 className="w-3.5 h-3.5 animate-spin" />
               Saving...
             </span>
           )}
           {saveStatus === 'saved' && (
-            <span className="flex items-center gap-1 text-emerald-400/90 text-[11px]">
-              <Check className="w-3 h-3" />
+            <span className="flex items-center gap-1 text-emerald-400/90 text-xs sm:text-[13px]">
+              <Check className="w-3.5 h-3.5" />
               Saved
             </span>
           )}
           {saveStatus === 'error' && (
-            <span className="flex items-center gap-1 text-red-400 text-[11px]">
-              <AlertTriangle className="w-3 h-3" />
+            <span className="flex items-center gap-1 text-red-400 text-xs sm:text-[13px]">
+              <AlertTriangle className="w-3.5 h-3.5" />
               {errorMessage || 'Save error'}
             </span>
           )}
           {saveStatus === 'idle' && content && (
-            <span className="text-gray-400 text-[11px]">Autosaved</span>
+            <span className="text-gray-400 text-xs sm:text-[13px]">Autosaved</span>
           )}
 
           {/* Character counter / DB overflow safety */}
           <span
-            className={`text-[10px] tabular-nums font-mono ${
+            className={`text-xs tabular-nums font-mono ${
               isNearLimit ? 'text-amber-400 font-semibold' : 'text-gray-500'
             }`}
             title="Max characters allowed to keep browser storage fast"
@@ -126,10 +126,10 @@ export function NotesEditor({ problemId, initialNotes, onSaveNotes }: NotesEdito
             <button
               type="button"
               onClick={handleClear}
-              className="flex items-center gap-1 text-gray-400 hover:text-red-400 text-[11px] transition-colors ml-1"
+              className="flex items-center gap-1 text-gray-400 hover:text-red-400 text-xs sm:text-[13px] transition-colors ml-1 cursor-pointer"
               title="Clear notes"
             >
-              <Trash2 className="w-3 h-3" />
+              <Trash2 className="w-3.5 h-3.5" />
               Clear
             </button>
           )}
@@ -142,7 +142,7 @@ export function NotesEditor({ problemId, initialNotes, onSaveNotes }: NotesEdito
         maxLength={MAX_NOTE_LENGTH}
         placeholder="Write your approach, intuition, edge cases, or reminders..."
         rows={4}
-        className="w-full bg-[#18191D] border border-[#292A2E] focus:border-[#383A40] rounded-md p-3 text-xs text-gray-200 placeholder-gray-500 leading-relaxed focus:outline-none focus:ring-1 focus:ring-[#383A40] transition-colors resize-y min-h-[90px] font-sans"
+        className="w-full bg-[#18191D] border border-[#292A2E] focus:border-[#3E4148] rounded-md p-3.5 text-xs sm:text-sm text-gray-200 placeholder-gray-500 leading-relaxed focus:outline-none focus:ring-1 focus:ring-[#3E4148] transition-colors resize-y min-h-[100px] font-sans"
       />
     </div>
   );

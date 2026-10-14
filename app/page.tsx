@@ -98,13 +98,13 @@ export default function Home() {
         {/* Problem List Main View (Independent Scroll Container) */}
         <main className="flex-1 min-h-0 h-full flex flex-col min-w-0 bg-[#141518] overflow-hidden">
           {/* Active Topic Header bar */}
-          <div className="shrink-0 px-4 py-3 bg-[#101113] border-b border-[#292A2E] flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <h2 className="text-sm font-semibold text-gray-100">
+          <div className="shrink-0 px-4 sm:px-6 py-3.5 bg-[#101113] border-b border-[#292A2E] flex items-center justify-between">
+            <div className="flex items-center gap-2.5">
+              <h2 className="text-sm sm:text-base font-semibold text-gray-100">
                 {activeTopic ? `${activeTopic.order}. ${activeTopic.name}` : 'All Problems'}
               </h2>
               {activeTopic && (
-                <span className="text-[11px] text-gray-400 tabular-nums">
+                <span className="text-xs sm:text-sm text-gray-400 tabular-nums">
                   ({(topicStats.get(activeTopic.id)?.completed || 0)} / {(topicStats.get(activeTopic.id)?.total || 0)} completed)
                 </span>
               )}
