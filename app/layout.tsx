@@ -1,36 +1,38 @@
-import type { Metadata, Viewport } from 'next';
-import './globals.css';
+import type { Metadata, Viewport } from "next";
+import "./globals.css";
 
 export const viewport: Viewport = {
-  themeColor: '#101113',
-  width: 'device-width',
+  themeColor: "#101113",
+  width: "device-width",
   initialScale: 1,
   maximumScale: 5,
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://dsa-tracker.local'),
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL || "https://dsa-tracker.local",
+  ),
   title: {
-    default: 'DSA Tracker - 41 Patterns & 820 Curated LeetCode Problems',
-    template: '%s | DSA Tracker',
+    default: "DSA Tracker - 41 Patterns & 820 Curated LeetCode Problems",
+    template: "%s | DSA Tracker",
   },
   description:
-    'A minimal, dark-themed personal DSA problem tracker. Organize 41 high-ROI LeetCode patterns and 820 problems, track completions, and maintain offline autosaved approach notes.',
-  applicationName: 'DSA Tracker',
+    "A minimal, dark-themed personal DSA problem tracker. Organize 41 high-ROI LeetCode patterns and 820 problems, track completions, and maintain offline autosaved approach notes.",
+  applicationName: "DSA Tracker",
   keywords: [
-    'DSA Tracker',
-    'LeetCode Patterns',
-    'Data Structures and Algorithms',
-    'Coding Interview Preparation',
-    'Two Pointers',
-    'Sliding Window',
-    'Dynamic Programming',
-    'Binary Search',
-    'Offline DSA Sheet',
+    "DSA Tracker",
+    "LeetCode Patterns",
+    "Data Structures and Algorithms",
+    "Coding Interview Preparation",
+    "Two Pointers",
+    "Sliding Window",
+    "Dynamic Programming",
+    "Binary Search",
+    "Offline DSA Sheet",
   ],
-  authors: [{ name: 'DSA Tracker' }],
-  creator: 'DSA Tracker',
-  publisher: 'DSA Tracker',
+  authors: [{ name: "Aayush Kashyap" }],
+  creator: "Aayush Kashyap",
+  publisher: "Aayush Kashyap",
   formatDetection: {
     email: false,
     address: false,
@@ -38,38 +40,38 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: '/icon.png', sizes: '512x512', type: 'image/png' },
-      { url: '/favicon.ico', sizes: 'any' },
+      { url: "/icon.png", sizes: "512x512", type: "image/png" },
+      { url: "/favicon.ico", sizes: "any" },
     ],
-    shortcut: '/favicon.ico',
+    shortcut: "/favicon.ico",
     apple: [
-      { url: '/apple-touch-icon.png', sizes: '512x512', type: 'image/png' },
+      { url: "/apple-touch-icon.png", sizes: "512x512", type: "image/png" },
     ],
   },
   openGraph: {
-    title: 'DSA Tracker - 41 Patterns & 820 Curated LeetCode Problems',
+    title: "DSA Tracker - 41 Patterns & 820 Curated LeetCode Problems",
     description:
-      'A quiet, distraction-free personal DSA problem tracker built for focused coding interview mastery. 41 patterns, 820 problems, offline autosaved notes.',
-    siteName: 'DSA Tracker',
-    url: '/',
+      "A quiet, distraction-free personal DSA problem tracker built for focused coding interview mastery. 41 patterns, 820 problems, offline autosaved notes.",
+    siteName: "DSA Tracker",
+    url: "/",
     images: [
       {
-        url: '/og-image.jpg',
+        url: "/og-image.jpg",
         width: 1200,
         height: 675,
-        alt: 'DSA Tracker - 3D Smoked Glass and Titanium Curly Brackets with Emerald Constellations',
+        alt: "DSA Tracker - 3D Smoked Glass and Titanium Curly Brackets with Emerald Constellations",
       },
     ],
-    locale: 'en_US',
-    type: 'website',
+    locale: "en_US",
+    type: "website",
   },
   twitter: {
-    card: 'summary_large_image',
-    title: 'DSA Tracker - 41 Patterns & 820 Curated LeetCode Problems',
+    card: "summary_large_image",
+    title: "DSA Tracker - 41 Patterns & 820 Curated LeetCode Problems",
     description:
-      'A quiet, distraction-free personal DSA problem tracker built for focused coding interview mastery. 41 patterns, 820 problems, offline autosaved notes.',
-    images: ['/og-image.jpg'],
-    creator: '@dsatracker',
+      "A quiet, distraction-free personal DSA problem tracker built for focused coding interview mastery. 41 patterns, 820 problems, offline autosaved notes.",
+    images: ["/og-image.jpg"],
+    creator: "@dsatracker",
   },
   robots: {
     index: true,
@@ -77,9 +79,9 @@ export const metadata: Metadata = {
     googleBot: {
       index: true,
       follow: true,
-      'max-video-preview': -1,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
     },
   },
 };
