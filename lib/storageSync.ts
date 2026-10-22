@@ -1,5 +1,9 @@
+import { TrackerMode } from './types';
+
 const COMPLETED_STORAGE_KEY = 'dsa_completed_status_v1';
 const NOTES_STORAGE_KEY = 'dsa_notes_content_v1';
+const MODE_STORAGE_KEY = 'dsa_tracker_mode_v1';
+const SELECTED_COMPANY_STORAGE_KEY = 'dsa_selected_company_v1';
 
 /**
  * Synchronously read completed problem IDs from localStorage
@@ -62,5 +66,54 @@ export function saveStoredNote(problemId: string, notes: string): void {
     localStorage.setItem(NOTES_STORAGE_KEY, JSON.stringify(map));
   } catch (err) {
     console.error('Failed to save notes to localStorage:', err);
+  }
+}
+
+/**
+ * Read active tracker mode ('topic' | 'company')
+ */
+export function getStoredTrackerMode(): TrackerMode {
+  if (typeof window === 'undefined') return 'topic';
+  try {
+    const mode = localStorage.getItem(MODE_STORAGE_KEY);
+    return mode === 'company' ? 'company' : 'topic';
+  } catch {
+    return 'topic';
+  }
+}
+
+/**
+ * Save active tracker mode
+ */
+export function saveStoredTrackerMode(mode: TrackerMode): void {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.setItem(MODE_STORAGE_KEY, mode);
+  } catch (err) {
+    console.error('Failed to save tracker mode:', err);
+  }
+}
+
+/**
+ * Read last selected company ID
+ */
+export function getStoredCompanyId(): string | null {
+  if (typeof window === 'undefined') return null;
+  try {
+    return localStorage.getItem(SELECTED_COMPANY_STORAGE_KEY);
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Save last selected company ID
+ */
+export function saveStoredCompanyId(companyId: string): void {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.setItem(SELECTED_COMPANY_STORAGE_KEY, companyId);
+  } catch (err) {
+    console.error('Failed to save selected company ID:', err);
   }
 }

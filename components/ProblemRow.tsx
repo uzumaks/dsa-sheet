@@ -1,12 +1,13 @@
 'use client';
 
 import React from 'react';
-import { Problem, Difficulty } from '@/lib/types';
+import { DisplayProblem, Difficulty } from '@/lib/types';
 import { NotesEditor } from './NotesEditor';
 import { Check, Plus, Minus, ExternalLink } from 'lucide-react';
 
 interface ProblemRowProps {
-  problem: Problem;
+  problem: DisplayProblem;
+  displayIndex?: number;
   isNotesExpanded: boolean;
   onToggleComplete: (id: string) => void;
   onToggleNotes: (id: string) => void;
@@ -30,6 +31,7 @@ const difficultyStyles: Record<Difficulty, { tag: string; label: string }> = {
 
 export function ProblemRow({
   problem,
+  displayIndex,
   isNotesExpanded,
   onToggleComplete,
   onToggleNotes,
@@ -37,6 +39,7 @@ export function ProblemRow({
 }: ProblemRowProps) {
   const diff = difficultyStyles[problem.difficulty] || difficultyStyles.easy;
   const hasNotes = Boolean(problem.notes && problem.notes.trim().length > 0);
+  const visualNumber = displayIndex !== undefined ? displayIndex : problem.order;
 
   return (
     <div
@@ -44,10 +47,10 @@ export function ProblemRow({
         problem.completed ? 'bg-[#121316]/60' : 'bg-[#17181B] hover:bg-[#1B1C20]'
       }`}
     >
-      <div className="flex items-center justify-between gap-3 px-3.5 sm:px-6 py-3 min-h-[50px]">
-        {/* 1. Completion Checkbox & 2. Problem Title */}
-        <div className="flex items-center gap-3.5 min-w-0 flex-1">
-          {/* Completion Checkbox */}
+      <div className="flex items-center justify-between gap-3 px-3.5 sm:px-6 py-2.5 sm:py-3 min-h-[48px]">
+        {/* 1. Completion Checkbox & 2. Continuous Serial Number & 3. Problem Title */}
+        <div className="flex items-center gap-3 sm:gap-3.5 min-w-0 flex-1">
+          {/* 1. Completion Checkbox */}
           <button
             type="button"
             onClick={(e) => {
@@ -64,17 +67,18 @@ export function ProblemRow({
             <Check className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[3]" />
           </button>
 
-          {/* Problem Title (Clicking opens URL in new tab) */}
+          {/* 2. Continuous Serial Number & 3. Problem Title */}
           <div className="min-w-0 flex-1 flex items-center gap-2">
             <span className="text-gray-500 text-xs sm:text-sm font-mono shrink-0 select-none">
-              {problem.order}.
+              {visualNumber}.
             </span>
+
             {problem.url ? (
               <a
                 href={problem.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`text-[13px] sm:text-[15px] font-normal truncate transition-colors group-hover:text-white leading-normal ${
+                className={`text-[13px] sm:text-[14px] md:text-[15px] font-normal truncate transition-colors group-hover:text-white leading-normal ${
                   problem.completed
                     ? 'text-gray-400 line-through decoration-gray-500/60 hover:text-gray-200'
                     : 'text-gray-200 hover:text-emerald-400 hover:underline'
@@ -85,7 +89,7 @@ export function ProblemRow({
               </a>
             ) : (
               <span
-                className={`text-[13px] sm:text-[15px] truncate leading-normal ${
+                className={`text-[13px] sm:text-[14px] md:text-[15px] truncate leading-normal ${
                   problem.completed ? 'text-gray-400 line-through' : 'text-gray-200'
                 }`}
               >
@@ -108,11 +112,11 @@ export function ProblemRow({
           </div>
         </div>
 
-        {/* 3. Difficulty Tag & 4. Plus/Notes Button */}
-        <div className="flex items-center gap-3 shrink-0">
+        {/* 4. Difficulty Tag & 5. Plus/Notes Button */}
+        <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
           {/* Difficulty Badge */}
           <span
-            className={`text-[11px] sm:text-xs font-medium px-2.5 py-0.5 rounded-full uppercase tracking-wider ${diff.tag}`}
+            className={`text-[11px] sm:text-xs font-medium px-2 sm:px-2.5 py-0.5 rounded-full uppercase tracking-wider ${diff.tag}`}
           >
             {diff.label}
           </span>

@@ -14,22 +14,24 @@ const siteUrl = "https://dsasheeeet.vercel.app";
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "DSA Tracker - 41 Patterns & 820 Curated LeetCode Problems",
-    template: "%s | DSA Tracker",
+    default: "DSASheeeet | DSA Practice Tracker for Patterns and Companies",
+    template: "%s | DSASheeeet",
   },
   description:
-    "A minimal, dark-themed personal DSA problem tracker. Organize 41 high-ROI LeetCode patterns and 820 problems, track completions, and maintain offline autosaved approach notes.",
-  applicationName: "DSA Tracker",
+    "Master Data Structures and Algorithms with DSASheeeet, a focused DSA practice workspace featuring 41 patterns, 423 companies, and 17K+ company-wise problem entries. Track solved questions, organize practice by difficulty and topic, save personal notes, and monitor your progress in one distraction-free workspace.",
+  applicationName: "DSASheeeet",
   keywords: [
+    "DSASheeeet",
+    "DSA Sheet",
     "DSA Tracker",
     "LeetCode Patterns",
+    "Company Wise DSA",
     "Data Structures and Algorithms",
     "Coding Interview Preparation",
     "Two Pointers",
     "Sliding Window",
     "Dynamic Programming",
     "Binary Search",
-    "Offline DSA Sheet",
   ],
   authors: [{ name: "Aayush Kashyap" }],
   creator: "Aayush Kashyap",
@@ -50,18 +52,18 @@ export const metadata: Metadata = {
     ],
   },
   openGraph: {
-    title: "DSA Tracker - 41 Patterns & 820 Curated LeetCode Problems",
+    title: "DSASheeeet | Your DSA Practice Workspace",
     description:
-      "A quiet, distraction-free personal DSA problem tracker built for focused coding interview mastery. 41 patterns, 820 problems, offline autosaved notes.",
-    siteName: "DSA Tracker",
+      "Explore DSA patterns and company-wise interview questions. Filter by topic and difficulty, track solved problems, save notes, and build a consistent interview preparation routine.",
+    siteName: "DSASheeeet",
     url: "/",
     images: [
       {
-        url: "/og-image.jpg",
+        url: "/og-image.png",
         width: 1200,
-        height: 675,
-        type: "image/jpeg",
-        alt: "DSA Tracker - 3D Smoked Glass and Titanium Curly Brackets with Emerald Constellations",
+        height: 630,
+        type: "image/png",
+        alt: "DSASheeeet | Your DSA Practice Workspace (41 Patterns, 423 Companies)",
       },
     ],
     locale: "en_US",
@@ -69,11 +71,11 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "DSA Tracker - 41 Patterns & 820 Curated LeetCode Problems",
+    title: "DSASheeeet | Your DSA Practice Workspace",
     description:
-      "A quiet, distraction-free personal DSA problem tracker built for focused coding interview mastery. 41 patterns, 820 problems, offline autosaved notes.",
-    images: ["/og-image.jpg"],
-    creator: "@dsatracker",
+      "Explore DSA patterns and company-wise interview questions. Filter by topic and difficulty, track solved problems, save notes, and build a consistent interview preparation routine.",
+    images: ["/og-image.png"],
+    creator: "@dsasheeeet",
   },
   robots: {
     index: true,
@@ -99,13 +101,13 @@ export default function RootLayout({
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="icon" href="/icon.png" type="image/png" sizes="512x512" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-        <meta property="og:image" content="/og-image.jpg" />
-        <meta property="og:image:secure_url" content="/og-image.jpg" />
-        <meta property="og:image:type" content="image/jpeg" />
+        <meta property="og:image" content="/og-image.png" />
+        <meta property="og:image:secure_url" content="/og-image.png" />
+        <meta property="og:image:type" content="image/png" />
         <meta property="og:image:width" content="1200" />
-        <meta property="og:image:height" content="675" />
+        <meta property="og:image:height" content="630" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:image" content="/og-image.jpg" />
+        <meta name="twitter:image" content="/og-image.png" />
       </head>
       <body className="bg-[#101113] text-[#F3F4F6] min-h-screen antialiased selection:bg-emerald-900/40 selection:text-emerald-200">
         {children}

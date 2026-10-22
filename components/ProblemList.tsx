@@ -1,13 +1,14 @@
 'use client';
 
 import React from 'react';
-import { Problem, Topic, DifficultyFilter as DiffFilterType, StatusFilter } from '@/lib/types';
+import { DisplayProblem, Topic, DifficultyFilter as DiffFilterType, StatusFilter } from '@/lib/types';
 import { ProblemRow } from './ProblemRow';
 import { EmptyState } from './EmptyState';
 
 interface ProblemListProps {
-  problems: Problem[];
+  problems: DisplayProblem[];
   activeTopic?: Topic;
+  activeTitle?: string;
   expandedNotesId: string | null;
   searchQuery: string;
   difficultyFilter: DiffFilterType;
@@ -22,6 +23,7 @@ interface ProblemListProps {
 export function ProblemList({
   problems,
   activeTopic,
+  activeTitle,
   expandedNotesId,
   searchQuery,
   difficultyFilter,
@@ -32,6 +34,8 @@ export function ProblemList({
   onClearSearch,
   onResetDifficulty,
 }: ProblemListProps) {
+  const currentTitle = activeTitle || activeTopic?.name || 'Problems';
+
   // If no problems to display, determine appropriate empty state
   if (problems.length === 0) {
     if (searchQuery.trim()) {
@@ -47,7 +51,7 @@ export function ProblemList({
       return (
         <EmptyState
           type="no-difficulty-match"
-          topicName={activeTopic?.name}
+          topicName={currentTitle}
           onAction={onResetDifficulty}
         />
       );
@@ -57,7 +61,7 @@ export function ProblemList({
       return (
         <EmptyState
           type="all-completed"
-          topicName={activeTopic?.name}
+          topicName={currentTitle}
         />
       );
     }
@@ -65,17 +69,18 @@ export function ProblemList({
     return (
       <EmptyState
         type="no-problems"
-        topicName={activeTopic?.name}
+        topicName={currentTitle}
       />
     );
   }
 
   return (
     <div className="flex-1 divide-y divide-[#202125] bg-[#141518]">
-      {problems.map((problem) => (
+      {problems.map((problem, index) => (
         <ProblemRow
           key={problem.id}
           problem={problem}
+          displayIndex={index + 1}
           isNotesExpanded={expandedNotesId === problem.id}
           onToggleComplete={onToggleComplete}
           onToggleNotes={onToggleNotes}

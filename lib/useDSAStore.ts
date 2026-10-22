@@ -3,20 +3,56 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { db } from './db';
 import { seedDatabaseIfEmpty } from './seed';
-import { Topic, Problem, DifficultyFilter, StatusFilter, SortOption, Difficulty } from './types';
+import {
+  Topic,
+  Problem,
+  DifficultyFilter,
+  StatusFilter,
+  SortOption,
+  Difficulty,
+  TrackerMode,
+  Company,
+  CompanyProblem,
+  DisplayProblem,
+} from './types';
 import { validateNote, checkStorageQuota, StorageStatus } from './storageSafety';
 import {
   getStoredCompletedMap,
   saveStoredCompletedStatus,
   getStoredNotesMap,
   saveStoredNote,
+  getStoredTrackerMode,
+  saveStoredTrackerMode,
+  getStoredCompanyId,
+  saveStoredCompanyId,
 } from './storageSync';
+import companyDataRaw from './companyData.json';
+
+// Companies are already canonical and sorted alphabetically in companyData.json
+const initialCompanies: Company[] = companyDataRaw.companies as Company[];
 
 export function useDSAStore() {
+  // Mode state: 'topic' | 'company'
+  const [mode, setModeState] = useState<TrackerMode>('topic');
+
+  // Topic Wise state
   const [topics, setTopics] = useState<Topic[]>([]);
   const [problems, setProblems] = useState<Problem[]>([]);
   const [selectedTopicId, setSelectedTopicId] = useState<string>('topic-1-hash-map-hash-set');
+
+  // Company Wise state
+  const [companies] = useState<Company[]>(initialCompanies);
+  const [companyProblems, setCompanyProblems] = useState<CompanyProblem[]>([]);
+  const [selectedCompanyId, setSelectedCompanyIdState] = useState<string>(
+    initialCompanies[0]?.id || 'company-google'
+  );
+  const [companyTopicFilter, setCompanyTopicFilter] = useState<string>('all');
+
+  // Search input & debounced search query
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [debouncedQuery, setDebouncedQuery] = useState<string>('');
+
+  // Shared filters & sorting
   const [difficultyFilter, setDifficultyFilter] = useState<DifficultyFilter>('all');
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
   const [sortOption, setSortOption] = useState<SortOption>('default');
@@ -26,39 +62,57 @@ export function useDSAStore() {
   const [dbError, setDbError] = useState<string | null>(null);
   const [storageStatus, setStorageStatus] = useState<StorageStatus | null>(null);
 
-  // Load from Dexie + localStorage and seed if empty
+  // Debounce search query by 100ms for smooth 60fps typing without UI freezing
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedQuery(searchQuery.trim());
+    }, 100);
+    return () => clearTimeout(handler);
+  }, [searchQuery]);
+
+  // Load and hydrate stored progress on mount
   const loadData = useCallback(async () => {
     try {
       setIsLoading(true);
-      await seedDatabaseIfEmpty(db);
 
+      const savedMode = getStoredTrackerMode();
+      setModeState(savedMode);
+
+      const savedCompanyId = getStoredCompanyId();
+      if (savedCompanyId && initialCompanies.some((c) => c.id === savedCompanyId)) {
+        setSelectedCompanyIdState(savedCompanyId);
+      } else if (initialCompanies.length > 0) {
+        setSelectedCompanyIdState(initialCompanies[0].id);
+      }
+
+      await seedDatabaseIfEmpty(db);
       const loadedTopics = await db.topics.orderBy('order').toArray();
       const loadedProblems = await db.problems.orderBy('order').toArray();
 
-      // Read fast synchronous localStorage backup
       const localCompletedMap = getStoredCompletedMap();
       const localNotesMap = getStoredNotesMap();
 
-      // Merge: ensure any status ticked in browser is guaranteed to reflect
-      const mergedProblems = loadedProblems.map((p) => {
-        const isCompleted = localCompletedMap[p.id] !== undefined
-          ? localCompletedMap[p.id]
-          : p.completed;
-        const notes = localNotesMap[p.id] !== undefined
-          ? localNotesMap[p.id]
-          : (p.notes || '');
+      // Merge topic problems
+      const mergedProblems = loadedProblems.map((p) => ({
+        ...p,
+        completed:
+          localCompletedMap[p.id] !== undefined ? Boolean(localCompletedMap[p.id]) : p.completed,
+        notes: localNotesMap[p.id] !== undefined ? localNotesMap[p.id] : p.notes || '',
+      }));
 
-        return {
-          ...p,
-          completed: Boolean(isCompleted),
-          notes,
-        };
-      });
+      // Merge company problems
+      const rawProblems = companyDataRaw.problems as unknown as Omit<CompanyProblem, 'completed' | 'notes'>[];
+      const mergedCompanyProblems: CompanyProblem[] = rawProblems.map((p) => ({
+        ...p,
+        completed:
+          localCompletedMap[p.id] !== undefined ? Boolean(localCompletedMap[p.id]) : false,
+        notes: localNotesMap[p.id] !== undefined ? localNotesMap[p.id] : '',
+      }));
 
       setTopics(loadedTopics);
       setProblems(mergedProblems);
+      setCompanyProblems(mergedCompanyProblems);
 
-      // Default selected topic to first available if current invalid
       if (loadedTopics.length > 0) {
         setSelectedTopicId((prev) => {
           if (prev && loadedTopics.some((t) => t.id === prev)) {
@@ -68,11 +122,10 @@ export function useDSAStore() {
         });
       }
 
-      // Check browser storage health
       const status = await checkStorageQuota();
       setStorageStatus(status);
     } catch (err: unknown) {
-      console.error('IndexedDB loading error:', err);
+      console.error('Data loading error:', err);
       setDbError(err instanceof Error ? err.message : 'Failed to access browser storage.');
     } finally {
       setIsLoading(false);
@@ -83,75 +136,132 @@ export function useDSAStore() {
     loadData();
   }, [loadData]);
 
-  // Topic actions
-  const addTopic = useCallback(async (name: string): Promise<string> => {
-    const trimmed = name.trim();
-    if (!trimmed) throw new Error('Topic name cannot be empty');
-
-    const id = trimmed.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + Date.now().toString(36);
-    const maxOrder = topics.reduce((max, t) => Math.max(max, t.order), 0);
-    const now = Date.now();
-
-    const newTopic: Topic = {
-      id,
-      name: trimmed,
-      order: maxOrder + 1,
-      createdAt: now,
-      updatedAt: now,
-    };
-
-    await db.topics.add(newTopic);
-    setTopics((prev) => [...prev, newTopic]);
-    setSelectedTopicId(id);
-    return id;
-  }, [topics]);
-
-  const renameTopic = useCallback(async (id: string, newName: string) => {
-    const trimmed = newName.trim();
-    if (!trimmed) return;
-
-    const now = Date.now();
-    await db.topics.update(id, { name: trimmed, updatedAt: now });
-    setTopics((prev) =>
-      prev.map((t) => (t.id === id ? { ...t, name: trimmed, updatedAt: now } : t))
-    );
+  // Mode toggler
+  const setMode = useCallback((newMode: TrackerMode) => {
+    setModeState(newMode);
+    saveStoredTrackerMode(newMode);
   }, []);
 
-  const deleteTopic = useCallback(async (id: string) => {
-    await db.transaction('rw', db.topics, db.problems, async () => {
-      await db.topics.delete(id);
-      await db.problems.where('topicId').equals(id).delete();
-    });
+  // Company selection (explicit user action saves to localStorage)
+  const setSelectedCompanyId = useCallback((companyId: string) => {
+    setSelectedCompanyIdState(companyId);
+    saveStoredCompanyId(companyId);
+    setCompanyTopicFilter('all');
+  }, []);
 
-    setTopics((prev) => {
-      const remaining = prev.filter((t) => t.id !== id);
-      if (selectedTopicId === id && remaining.length > 0) {
-        setSelectedTopicId(remaining[0].id);
+  // Pre-group company problems by companyId for O(1) instant lookup
+  const companyProblemsMap = useMemo(() => {
+    const map = new Map<string, CompanyProblem[]>();
+    for (let i = 0; i < companyProblems.length; i++) {
+      const p = companyProblems[i];
+      const list = map.get(p.companyId);
+      if (list) {
+        list.push(p);
+      } else {
+        map.set(p.companyId, [p]);
       }
-      return remaining;
-    });
+    }
+    return map;
+  }, [companyProblems]);
 
-    setProblems((prev) => prev.filter((p) => p.topicId !== id));
-  }, [selectedTopicId]);
+  // Pre-indexed searchable records for topic problems
+  const topicSearchIndex = useMemo(() => {
+    return problems.map((p) => ({
+      problem: p,
+      titleLower: p.title.toLowerCase(),
+    }));
+  }, [problems]);
 
-  // Problem actions
+  // Pre-indexed company names for fast company search
+  const companySearchIndex = useMemo(() => {
+    return companies.map((c) => ({
+      company: c,
+      nameLower: c.name.toLowerCase(),
+    }));
+  }, [companies]);
+
+  // Fast score function for search matching
+  const getMatchScore = useCallback((textLower: string, q: string): number => {
+    if (textLower === q) return 100;
+    if (textLower.startsWith(q)) return 80;
+    if (textLower.includes(' ' + q)) return 60;
+    if (textLower.includes(q)) return 30;
+    return 0;
+  }, []);
+
+  // Auto-selection based on debounced search query
+  useEffect(() => {
+    if (!debouncedQuery) return;
+    const q = debouncedQuery.toLowerCase();
+
+    if (mode === 'topic') {
+      let bestScore = 0;
+      let bestTopicId = '';
+      for (let i = 0; i < topicSearchIndex.length; i++) {
+        const item = topicSearchIndex[i];
+        const score = getMatchScore(item.titleLower, q);
+        if (score > bestScore) {
+          bestScore = score;
+          bestTopicId = item.problem.topicId;
+          if (score === 100) break;
+        }
+      }
+      if (bestTopicId && bestTopicId !== selectedTopicId) {
+        setSelectedTopicId(bestTopicId);
+      }
+    } else {
+      // Company Wise mode: searches COMPANY NAMES ONLY
+      let bestScore = 0;
+      let bestCompanyId = '';
+      for (let i = 0; i < companySearchIndex.length; i++) {
+        const item = companySearchIndex[i];
+        const score = getMatchScore(item.nameLower, q);
+        if (score > bestScore) {
+          bestScore = score;
+          bestCompanyId = item.company.id;
+          if (score === 100) break;
+        }
+      }
+      if (bestCompanyId && bestCompanyId !== selectedCompanyId) {
+        setSelectedCompanyIdState(bestCompanyId);
+      }
+    }
+  }, [
+    debouncedQuery,
+    mode,
+    topicSearchIndex,
+    companySearchIndex,
+    selectedTopicId,
+    selectedCompanyId,
+    getMatchScore,
+  ]);
+
+  // Toggle problem completion
   const toggleComplete = useCallback(async (problemId: string) => {
     const now = Date.now();
     let nextStatus = false;
 
+    if (problemId.startsWith('company-')) {
+      setCompanyProblems((prev) => {
+        const current = prev.find((p) => p.id === problemId);
+        nextStatus = current ? !current.completed : true;
+        saveStoredCompletedStatus(problemId, nextStatus);
+        return prev.map((p) =>
+          p.id === problemId ? { ...p, completed: nextStatus } : p
+        );
+      });
+      return;
+    }
+
     setProblems((prev) => {
       const current = prev.find((p) => p.id === problemId);
       nextStatus = current ? !current.completed : true;
-
-      // 1. Immediately and synchronously write to localStorage
       saveStoredCompletedStatus(problemId, nextStatus);
-
       return prev.map((p) =>
         p.id === problemId ? { ...p, completed: nextStatus, updatedAt: now } : p
       );
     });
 
-    // 2. Persist to Dexie IndexedDB
     try {
       await db.problems.update(problemId, { completed: nextStatus, updatedAt: now });
     } catch (err) {
@@ -159,132 +269,141 @@ export function useDSAStore() {
     }
   }, []);
 
+  // Update notes
   const updateNotes = useCallback(async (problemId: string, notes: string) => {
-    // Safety check: validate length and format to prevent browser lag / IDB overflow
     const validation = validateNote(notes);
     if (!validation.isValid) {
       throw new Error(validation.error);
     }
 
     const now = Date.now();
-
-    // 1. Immediately write to localStorage
     saveStoredNote(problemId, notes);
 
-    // 2. Update React state
+    if (problemId.startsWith('company-')) {
+      setCompanyProblems((prev) =>
+        prev.map((p) => (p.id === problemId ? { ...p, notes } : p))
+      );
+      return;
+    }
+
     setProblems((prev) =>
       prev.map((p) => (p.id === problemId ? { ...p, notes, updatedAt: now } : p))
     );
 
-    // 3. Persist to Dexie IndexedDB
     try {
       await db.problems.update(problemId, { notes, updatedAt: now });
     } catch (err) {
       console.warn('Dexie update notes failed (localStorage is safe):', err);
     }
 
-    // Periodically re-check storage estimate
     if (Math.random() < 0.2) {
       checkStorageQuota().then(setStorageStatus).catch(() => {});
     }
   }, []);
 
-  const addProblem = useCallback(
-    async (data: { title: string; url?: string; topicId: string; difficulty: Difficulty }) => {
-      const trimmedTitle = data.title.trim();
-      if (!trimmedTitle) throw new Error('Problem title is required');
-
-      const id = 'prob-' + Date.now().toString(36) + '-' + Math.random().toString(36).substring(2, 6);
-      const existingInTopic = problems.filter((p) => p.topicId === data.topicId);
-      const maxOrder = existingInTopic.reduce((max, p) => Math.max(max, p.order), 0);
-      const now = Date.now();
-
-      const newProblem: Problem = {
-        id,
-        title: trimmedTitle,
-        url: data.url?.trim() || undefined,
-        topicId: data.topicId,
-        difficulty: data.difficulty,
-        completed: false,
-        notes: '',
-        order: maxOrder + 1,
-        createdAt: now,
-        updatedAt: now,
-      };
-
-      await db.problems.add(newProblem);
-      setProblems((prev) => [...prev, newProblem]);
-      return newProblem;
-    },
-    [problems]
-  );
-
-  const editProblem = useCallback(
-    async (
-      id: string,
-      data: { title: string; url?: string; topicId: string; difficulty: Difficulty }
-    ) => {
-      const trimmedTitle = data.title.trim();
-      if (!trimmedTitle) return;
-
-      const now = Date.now();
-      const updates = {
-        title: trimmedTitle,
-        url: data.url?.trim() || undefined,
-        topicId: data.topicId,
-        difficulty: data.difficulty,
-        updatedAt: now,
-      };
-
-      await db.problems.update(id, updates);
-      setProblems((prev) => prev.map((p) => (p.id === id ? { ...p, ...updates } : p)));
-    },
-    []
-  );
-
-  const deleteProblem = useCallback(async (id: string) => {
-    await db.problems.delete(id);
-    setProblems((prev) => prev.filter((p) => p.id !== id));
-    if (expandedNotesId === id) {
-      setExpandedNotesId(null);
-    }
-  }, [expandedNotesId]);
-
-  // Overall stats
-  const totalProblemsCount = problems.length;
-  const totalCompletedCount = useMemo(
-    () => problems.filter((p) => p.completed).length,
-    [problems]
-  );
-
-  // Per topic completion counts: Map<topicId, { completed: number, total: number }>
+  // Topic stats: Map<topicId, { completed: number, total: number }>
   const topicStats = useMemo(() => {
     const map = new Map<string, { completed: number; total: number }>();
     topics.forEach((t) => map.set(t.id, { completed: 0, total: 0 }));
 
-    problems.forEach((p) => {
+    for (let i = 0; i < problems.length; i++) {
+      const p = problems[i];
       const current = map.get(p.topicId) || { completed: 0, total: 0 };
       current.total += 1;
       if (p.completed) current.completed += 1;
       map.set(p.topicId, current);
-    });
+    }
 
     return map;
   }, [topics, problems]);
 
-  // Filtered and sorted problems for active view
-  const displayedProblems = useMemo(() => {
-    let list = problems.filter((p) => p.topicId === selectedTopicId);
+  // Company stats: Map<companyId, { completed: number, total: number }>
+  const companyStats = useMemo(() => {
+    const map = new Map<string, { completed: number; total: number }>();
+    companies.forEach((c) => map.set(c.id, { completed: 0, total: c.totalCount }));
 
-    if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase().trim();
-      list = list.filter((p) => p.title.toLowerCase().includes(q));
+    for (let i = 0; i < companyProblems.length; i++) {
+      const p = companyProblems[i];
+      const current = map.get(p.companyId);
+      if (current && p.completed) {
+        current.completed += 1;
+      }
     }
 
+    return map;
+  }, [companies, companyProblems]);
+
+  // Unique topics for selected company
+  const availableCompanyTopics = useMemo(() => {
+    if (mode !== 'company') return [];
+    const compProblems = companyProblemsMap.get(selectedCompanyId) || [];
+    const set = new Set<string>();
+    for (let i = 0; i < compProblems.length; i++) {
+      const p = compProblems[i];
+      for (let j = 0; j < p.topics.length; j++) {
+        const trimmed = p.topics[j].trim();
+        if (trimmed) set.add(trimmed);
+      }
+    }
+    return Array.from(set).sort((a, b) => a.localeCompare(b));
+  }, [mode, companyProblemsMap, selectedCompanyId]);
+
+  // Total counts based on mode
+  const totalCompletedCount = useMemo(() => {
+    if (mode === 'topic') {
+      return problems.filter((p) => p.completed).length;
+    }
+    return companyProblems.filter((p) => p.completed).length;
+  }, [mode, problems, companyProblems]);
+
+  const totalProblemsCount = useMemo(() => {
+    if (mode === 'topic') {
+      return problems.length;
+    }
+    return companyProblems.length;
+  }, [mode, problems, companyProblems]);
+
+  // Displayed problems derivation
+  const displayedProblems: DisplayProblem[] = useMemo(() => {
+    const isSearching = debouncedQuery.length > 0;
+    const q = debouncedQuery.toLowerCase();
+
+    let list: DisplayProblem[] = [];
+
+    if (mode === 'topic') {
+      if (isSearching) {
+        // Global search across ALL topics for problem titles
+        const scored: { problem: Problem; score: number }[] = [];
+        for (let i = 0; i < topicSearchIndex.length; i++) {
+          const item = topicSearchIndex[i];
+          const score = getMatchScore(item.titleLower, q);
+          if (score > 0) {
+            scored.push({ problem: item.problem, score });
+          }
+        }
+        if (sortOption === 'default') {
+          scored.sort((a, b) => b.score - a.score || a.problem.order - b.problem.order);
+        }
+        list = scored.slice(0, 200).map((s) => s.problem);
+      } else {
+        list = problems.filter((p) => p.topicId === selectedTopicId);
+      }
+    } else {
+      // Company Wise mode: displays the selected company's complete problem list
+      list = companyProblemsMap.get(selectedCompanyId) || [];
+
+      // Filter by company topic dropdown if set
+      if (companyTopicFilter !== 'all') {
+        list = list.filter((p) => p.topics && p.topics.includes(companyTopicFilter));
+      }
+    }
+
+    // Filter by difficulty
     if (difficultyFilter !== 'all') {
       list = list.filter((p) => p.difficulty === difficultyFilter);
     }
 
+    // Filter by completion status
     if (statusFilter !== 'all') {
       const isCompleted = statusFilter === 'completed';
       list = list.filter((p) => p.completed === isCompleted);
@@ -297,45 +416,88 @@ export function useDSAStore() {
       hard: 3,
     };
 
-    switch (sortOption) {
-      case 'name-asc':
-        result.sort((a, b) => a.title.localeCompare(b.title));
-        break;
-      case 'name-desc':
-        result.sort((a, b) => b.title.localeCompare(a.title));
-        break;
-      case 'difficulty-asc':
-        result.sort((a, b) => difficultyWeights[a.difficulty] - difficultyWeights[b.difficulty]);
-        break;
-      case 'difficulty-desc':
-        result.sort((a, b) => difficultyWeights[b.difficulty] - difficultyWeights[a.difficulty]);
-        break;
-      case 'completed-first':
-        result.sort((a, b) => (b.completed ? 1 : 0) - (a.completed ? 1 : 0));
-        break;
-      case 'incomplete-first':
-        result.sort((a, b) => (a.completed ? 1 : 0) - (b.completed ? 1 : 0));
-        break;
-      case 'default':
-      default:
-        result.sort((a, b) => a.order - b.order);
-        break;
+    // Sorting logic
+    if (mode === 'company' && sortOption === 'default') {
+      // Requirement 10: In Company Wise mode, default view sorts Easy → Medium → Hard
+      result.sort(
+        (a, b) =>
+          difficultyWeights[a.difficulty] - difficultyWeights[b.difficulty] ||
+          a.order - b.order
+      );
+    } else if (sortOption !== 'default' || (mode === 'topic' && !isSearching)) {
+      switch (sortOption) {
+        case 'name-asc':
+          result.sort((a, b) => a.title.localeCompare(b.title));
+          break;
+        case 'name-desc':
+          result.sort((a, b) => b.title.localeCompare(a.title));
+          break;
+        case 'difficulty-asc':
+          result.sort((a, b) => difficultyWeights[a.difficulty] - difficultyWeights[b.difficulty]);
+          break;
+        case 'difficulty-desc':
+          result.sort((a, b) => difficultyWeights[b.difficulty] - difficultyWeights[a.difficulty]);
+          break;
+        case 'completed-first':
+          result.sort((a, b) => (b.completed ? 1 : 0) - (a.completed ? 1 : 0));
+          break;
+        case 'incomplete-first':
+          result.sort((a, b) => (a.completed ? 1 : 0) - (b.completed ? 1 : 0));
+          break;
+        case 'default':
+        default:
+          result.sort((a, b) => a.order - b.order);
+          break;
+      }
     }
 
     return result;
-  }, [problems, selectedTopicId, searchQuery, difficultyFilter, statusFilter, sortOption]);
+  }, [
+    mode,
+    problems,
+    selectedTopicId,
+    selectedCompanyId,
+    companyProblemsMap,
+    topicSearchIndex,
+    debouncedQuery,
+    companyTopicFilter,
+    difficultyFilter,
+    statusFilter,
+    sortOption,
+    getMatchScore,
+  ]);
 
   const toggleNotes = useCallback((problemId: string) => {
     setExpandedNotesId((prev) => (prev === problemId ? null : problemId));
   }, []);
 
+  const activeTopic = useMemo(
+    () => topics.find((t) => t.id === selectedTopicId),
+    [topics, selectedTopicId]
+  );
+
+  const activeCompany = useMemo(
+    () => companies.find((c) => c.id === selectedCompanyId) || companies[0],
+    [companies, selectedCompanyId]
+  );
+
   return {
+    mode,
+    setMode,
     topics,
     problems,
     selectedTopicId,
     setSelectedTopicId,
+    companies,
+    selectedCompanyId,
+    setSelectedCompanyId,
+    activeCompany,
+    companyTopicFilter,
+    setCompanyTopicFilter,
+    availableCompanyTopics,
     searchQuery,
     setSearchQuery,
+    debouncedQuery,
     difficultyFilter,
     setDifficultyFilter,
     statusFilter,
@@ -348,20 +510,15 @@ export function useDSAStore() {
     dbError,
     storageStatus,
     // Actions
-    addTopic,
-    renameTopic,
-    deleteTopic,
     toggleComplete,
     updateNotes,
-    addProblem,
-    editProblem,
-    deleteProblem,
     // Stats & processed
     totalProblemsCount,
     totalCompletedCount,
     topicStats,
+    companyStats,
     displayedProblems,
-    activeTopic: topics.find((t) => t.id === selectedTopicId),
+    activeTopic,
   };
 }
 

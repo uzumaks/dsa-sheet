@@ -70,8 +70,8 @@
   }
 
   .custom-scrollbar::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+    width: 7px;
+    height: 7px;
   }
 
   .custom-scrollbar::-webkit-scrollbar-track {
@@ -81,10 +81,45 @@
   .custom-scrollbar::-webkit-scrollbar-thumb {
     background: #2E3036;
     border-radius: 9999px;
+    min-height: 56px;
     transition: background-color 0.2s ease;
   }
 
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: #42454D;
+    background: #454852;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:active {
+    background: #5A5E6B;
+  }
+
+  /* Sidebar Specific Scrollbar with Taller, Easy-to-Grab Thumb */
+  .sidebar-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: #383A42 transparent;
+  }
+
+  .sidebar-scrollbar::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .sidebar-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .sidebar-scrollbar::-webkit-scrollbar-thumb {
+    background: #33363D;
+    border-radius: 9999px;
+    min-height: 64px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    transition: background-color 0.2s ease;
+  }
+
+  .sidebar-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #4B4E58;
+  }
+
+  .sidebar-scrollbar::-webkit-scrollbar-thumb:active {
+    background: #606470;
   }
 }
