@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { Search, CheckCircle2, X } from 'lucide-react';
-import { TrackerMode } from '@/lib/types';
+import React from "react";
+import { Search, CheckCircle2, X } from "lucide-react";
+import { TrackerMode } from "@/lib/types";
 
 interface AppHeaderProps {
   mode: TrackerMode;
@@ -21,9 +21,10 @@ export function AppHeader({
   searchQuery,
   onSearchChange,
 }: AppHeaderProps) {
-  const percentage = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
+  const percentage =
+    totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
   const searchPlaceholder =
-    mode === 'company' ? 'Search for a company...' : 'Search for a problem...';
+    mode === "company" ? "Search for a company..." : "Search for a problem...";
 
   return (
     <header className="sticky top-0 z-30 w-full bg-[#101113]/90 backdrop-blur-md border-b border-[#292A2E] px-4 sm:px-6 py-2.5 transition-colors">
@@ -32,7 +33,7 @@ export function AppHeader({
         <div className="flex items-center gap-3 sm:gap-4 w-full md:w-auto justify-between md:justify-start">
           <div className="flex items-center gap-2.5 sm:gap-3">
             <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-md bg-[#17181B] border border-[#292A2E] flex items-center justify-center text-xs sm:text-sm font-semibold text-emerald-400 tracking-wider">
-              {'{ }'}
+              {"{ }"}
             </div>
             <h1 className="text-base sm:text-lg font-bold text-gray-100 tracking-tight select-none">
               DSASheeeet
@@ -43,8 +44,11 @@ export function AppHeader({
           <div className="flex items-center gap-2 sm:gap-2.5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-md bg-[#17181B] border border-[#292A2E]">
             <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-400/90" />
             <span className="text-xs sm:text-sm font-medium text-gray-300 tabular-nums">
-              {completedCount} <span className="text-gray-500">/</span> {totalCount}{' '}
-              <span className="text-gray-400 text-xs font-normal">({percentage}%)</span>
+              {completedCount} <span className="text-gray-500">/</span>{" "}
+              {totalCount}{" "}
+              <span className="text-gray-400 text-xs font-normal">
+                ({percentage}%)
+              </span>
             </span>
             <div className="w-16 sm:w-20 h-1.5 sm:h-2 bg-[#25272C] rounded-full overflow-hidden hidden sm:block">
               <div
@@ -62,11 +66,11 @@ export function AppHeader({
             <button
               type="button"
               id="mode-topic-wise"
-              onClick={() => onModeChange('topic')}
+              onClick={() => onModeChange("topic")}
               className={`px-2.5 sm:px-3 py-1.5 rounded transition-all cursor-pointer select-none ${
-                mode === 'topic'
-                  ? 'bg-[#25272D] text-emerald-400 font-semibold shadow-xs'
-                  : 'text-gray-400 hover:text-gray-200'
+                mode === "topic"
+                  ? "bg-[#25272D] text-emerald-400 font-semibold shadow-xs"
+                  : "text-gray-400 hover:text-gray-200"
               }`}
             >
               Topic Wise
@@ -74,11 +78,11 @@ export function AppHeader({
             <button
               type="button"
               id="mode-company-wise"
-              onClick={() => onModeChange('company')}
+              onClick={() => onModeChange("company")}
               className={`px-2.5 sm:px-3 py-1.5 rounded transition-all cursor-pointer select-none ${
-                mode === 'company'
-                  ? 'bg-[#25272D] text-emerald-400 font-semibold shadow-xs'
-                  : 'text-gray-400 hover:text-gray-200'
+                mode === "company"
+                  ? "bg-[#25272D] text-emerald-400 font-semibold shadow-xs"
+                  : "text-gray-400 hover:text-gray-200"
               }`}
             >
               Company Wise
@@ -98,7 +102,7 @@ export function AppHeader({
             {searchQuery && (
               <button
                 type="button"
-                onClick={() => onSearchChange('')}
+                onClick={() => onSearchChange("")}
                 className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-200 transition-colors cursor-pointer"
                 aria-label="Clear search"
               >
