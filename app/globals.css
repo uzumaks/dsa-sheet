@@ -3,28 +3,28 @@
 @layer base {
   :root {
     --bg-main: #101113;
-    --bg-surface: #17181B;
-    --bg-surface-hover: #1F2024;
-    --bg-surface-active: #25272C;
-    --border-subtle: #292A2E;
-    --border-strong: #383A40;
-    --text-primary: #F3F4F6;
-    --text-secondary: #9CA3AF;
-    --text-muted: #6B7280;
-    
-    --color-easy-text: #4ADE80;
+    --bg-surface: #17181b;
+    --bg-surface-hover: #1f2024;
+    --bg-surface-active: #25272c;
+    --border-subtle: #292a2e;
+    --border-strong: #383a40;
+    --text-primary: #f3f4f6;
+    --text-secondary: #9ca3af;
+    --text-muted: #6b7280;
+
+    --color-easy-text: #4ade80;
     --color-easy-bg: rgba(34, 197, 94, 0.1);
     --color-easy-border: rgba(34, 197, 94, 0.22);
 
-    --color-medium-text: #FBBF24;
+    --color-medium-text: #fbbf24;
     --color-medium-bg: rgba(245, 158, 11, 0.1);
     --color-medium-border: rgba(245, 158, 11, 0.22);
 
-    --color-hard-text: #F87171;
+    --color-hard-text: #f87171;
     --color-hard-bg: rgba(239, 68, 68, 0.1);
     --color-hard-border: rgba(239, 68, 68, 0.22);
 
-    --color-complete: #22C55E;
+    --color-complete: #22c55e;
     --color-complete-subtle: rgba(34, 197, 94, 0.15);
   }
 
@@ -49,10 +49,13 @@
     }
   }
 
-  html, body {
+  html,
+  body {
     background-color: var(--bg-main);
     color: var(--text-primary);
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-family:
+      -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
+      Arial, sans-serif;
     height: 100%;
     margin: 0;
     padding: 0;
@@ -66,7 +69,7 @@
     scroll-behavior: smooth;
     overscroll-behavior: contain;
     scrollbar-width: thin;
-    scrollbar-color: #2E3036 transparent;
+    scrollbar-color: #2e3036 transparent;
   }
 
   .custom-scrollbar::-webkit-scrollbar {
@@ -79,7 +82,7 @@
   }
 
   .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: #2E3036;
+    background: #2e3036;
     border-radius: 9999px;
     min-height: 56px;
     transition: background-color 0.2s ease;
@@ -90,13 +93,13 @@
   }
 
   .custom-scrollbar::-webkit-scrollbar-thumb:active {
-    background: #5A5E6B;
+    background: #5a5e6b;
   }
 
   /* Sidebar Specific Scrollbar with Taller, Easy-to-Grab Thumb */
   .sidebar-scrollbar {
     scrollbar-width: thin;
-    scrollbar-color: #383A42 transparent;
+    scrollbar-color: #383a42 transparent;
   }
 
   .sidebar-scrollbar::-webkit-scrollbar {
@@ -108,15 +111,15 @@
   }
 
   .sidebar-scrollbar::-webkit-scrollbar-thumb {
-    background: #33363D;
+    background: #33363d;
     border-radius: 9999px;
-    min-height: 64px;
+    min-height: 50px;
     border: 1px solid rgba(0, 0, 0, 0.2);
     transition: background-color 0.2s ease;
   }
 
   .sidebar-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: #4B4E58;
+    background: #4b4e58;
   }
 
   .sidebar-scrollbar::-webkit-scrollbar-thumb:active {
