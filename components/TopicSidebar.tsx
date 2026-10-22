@@ -51,8 +51,12 @@ export function TopicSidebar({
         </span>
       </div>
 
-      {/* Navigation List: Shared Natural Independent Scroll Container with Taller Thumb */}
-      <div className="flex-1 min-h-0 overflow-y-auto p-2 sm:p-2.5 flex flex-col gap-1 sm:gap-1.5 custom-scrollbar sidebar-scrollbar overscroll-contain">
+      {/* Navigation List: Independent Scroll Container */}
+      <div
+        className={`flex-1 min-h-0 overflow-y-auto p-2 sm:p-2.5 flex flex-col gap-1 sm:gap-1.5 overscroll-contain ${
+          mode === 'company' ? 'company-scrollbar' : 'custom-scrollbar'
+        }`}
+      >
         {mode === 'topic' ? (
           // Topic Wise Mode
           topics.map((topic) => {
