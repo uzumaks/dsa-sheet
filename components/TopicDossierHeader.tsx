@@ -80,33 +80,35 @@ export function TopicDossierHeader({
   return (
     <div
       className={`shrink-0 bg-[#121316] border-b border-[#25272C] transition-all duration-200 font-pretty ${
-        isCollapsed ? 'py-2.5 px-3.5 sm:px-6' : 'p-4 sm:p-5'
+        isCollapsed ? 'py-2.5 px-3.5 sm:px-6' : 'p-3.5 sm:p-4.5'
       }`}
     >
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
         {/* Left: Pattern Title & Invariant Note */}
-        <div className="flex items-center sm:items-start gap-3 sm:gap-3.5 min-w-0">
+        <div className="flex items-center gap-3 sm:gap-3.5 min-w-0">
           <div
-            className={`rounded-lg bg-[#17181B] border border-[#292A2E] flex items-center justify-center text-emerald-400 shrink-0 shadow-sm transition-all ${
-              isCollapsed ? 'w-8 h-8 sm:w-9 sm:h-9' : 'w-10 h-10 sm:w-11 sm:h-11'
+            className={`rounded-lg bg-[#16171A] border border-[#24262C] flex items-center justify-center text-emerald-400/90 shrink-0 shadow-xs transition-all ${
+              isCollapsed ? 'w-8 h-8' : 'w-9 h-9 sm:w-10 sm:h-10'
             }`}
           >
-            <Code2 className={`${isCollapsed ? 'w-4 h-4' : 'w-5 h-5'} stroke-[1.5]`} />
+            <Code2 className={`${isCollapsed ? 'w-4 h-4' : 'w-4.5 h-4.5 sm:w-5 sm:h-5'} stroke-[1.5]`} />
           </div>
           <div className="min-w-0">
+            <div className="flex items-center gap-2 flex-wrap">
+              <h2 className="text-base sm:text-lg lg:text-xl font-normal text-gray-100 tracking-tight truncate">
+                {topic ? topic.name : 'All Algorithm Patterns'}
+              </h2>
+              <span className="text-[10px] font-pretty-mono font-[400] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shrink-0 select-none">
+                {topic ? `Pattern ${topic.order} of 41` : '41 Patterns'}
+              </span>
+            </div>
+
             {!isCollapsed && (
-              <div className="flex items-center gap-2">
-                <span className="text-[10px] font-pretty-mono font-[300] tracking-widest text-emerald-400 uppercase">
-                  {topic ? `PATTERN ${topic.order.toString().padStart(2, '0')} OF 41` : 'ALL PATTERNS'}
+              <p className="text-xs text-gray-400 font-[300] mt-1 max-w-2xl line-clamp-1 sm:line-clamp-none leading-relaxed">
+                <span className="text-gray-500 font-pretty-mono text-[11px] mr-1.5 uppercase tracking-wide">
+                  Invariant:
                 </span>
-              </div>
-            )}
-            <h2 className="text-base sm:text-lg lg:text-xl font-medium text-gray-100 tracking-wide mt-0.5 truncate">
-              {topic ? topic.name : 'All Algorithm Patterns'}
-            </h2>
-            {!isCollapsed && (
-              <p className="text-xs text-gray-400 font-[300] mt-1 max-w-2xl line-clamp-1 sm:line-clamp-none italic">
-                Invariant: {invariant}
+                <span className="text-gray-300 font-[350]">{invariant}</span>
               </p>
             )}
           </div>
@@ -128,7 +130,7 @@ export function TopicDossierHeader({
           </div>
 
           {/* Progress Box */}
-          <div className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-md bg-[#17181B] border border-[#25272C] text-xs font-pretty-mono font-[300]">
+          <div className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-md bg-[#16171A] border border-[#24262C] text-xs font-pretty-mono font-[300]">
             <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 stroke-[1.5]" />
             <span className="text-gray-300 tabular-nums">
               {completedCount}/{totalCount}
@@ -140,12 +142,12 @@ export function TopicDossierHeader({
           <button
             type="button"
             onClick={toggleCollapse}
-            className="h-7 sm:h-7.5 px-2 sm:px-2.5 rounded-md bg-[#17181B] hover:bg-[#202126] border border-[#25272C] hover:border-[#383A40] text-gray-400 hover:text-emerald-400 transition-colors flex items-center gap-1 text-xs font-pretty-mono cursor-pointer select-none shrink-0"
-            title={isCollapsed ? "Drop / Expand topic tab (^)" : "Close / Shrink topic tab (^)"}
-            aria-label={isCollapsed ? "Expand topic tab" : "Collapse topic tab"}
+            className="h-7 sm:h-7.5 px-2 sm:px-2.5 rounded-md bg-[#16171A] hover:bg-[#1E2025] border border-[#24262C] hover:border-[#33353C] text-gray-400 hover:text-emerald-400 transition-colors flex items-center gap-1 text-xs font-pretty-mono cursor-pointer select-none shrink-0"
+            title={isCollapsed ? "Expand topic header (^)" : "Collapse topic header (^)"}
+            aria-label={isCollapsed ? "Expand topic header" : "Collapse topic header"}
           >
             <span className="hidden md:inline text-[11px] text-gray-400 font-[300]">
-              {isCollapsed ? "Topic" : "Hide"}
+              {isCollapsed ? "Expand" : "Collapse"}
             </span>
             {isCollapsed ? (
               <ChevronDown className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-400 stroke-[2]" />

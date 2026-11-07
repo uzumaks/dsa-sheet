@@ -167,7 +167,7 @@ export function TopicSidebar({
         {mode === 'topic' ? (
           topicViewMode === 'tracks' ? (
             // Grouped Curriculum Tracks
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-2.5">
               {TOPIC_TRACKS.map((track, trackIdx) => {
                 const trackOrders = new Set(track.orders);
                 const trackTopics = topics.filter((t) => trackOrders.has(t.order));
@@ -184,13 +184,13 @@ export function TopicSidebar({
                 });
 
                 return (
-                  <div key={track.id} className="flex flex-col gap-1">
-                    {/* Track Section Heading */}
-                    <div className="px-2 py-1 flex items-center justify-between text-[11px] font-pretty-mono text-gray-400 border-b border-[#1E2024]">
+                  <div key={track.id} className="flex flex-col">
+                    {/* Track Section Heading with breathing room */}
+                    <div className="px-2.5 py-1.5 flex items-center justify-between text-[10.5px] font-pretty-mono uppercase tracking-wider text-gray-400 border-b border-[#1E2024] mb-1">
                       <span className="font-[400] text-gray-300">
                         {track.name}
                       </span>
-                      <span className="text-[10px] text-gray-500">
+                      <span className="text-[10px] text-gray-500 tabular-nums">
                         {trackCompleted}/{trackTotal}
                       </span>
                     </div>
@@ -212,15 +212,21 @@ export function TopicSidebar({
                             }}
                             className={`w-full text-left flex items-center justify-between px-2.5 py-1.5 rounded-md cursor-pointer transition-all whitespace-nowrap lg:whitespace-normal group ${
                               isSelected
-                                ? 'bg-[#17181B] text-gray-100 border border-[#292A2E] shadow-xs'
-                                : 'text-gray-400 hover:text-gray-200 hover:bg-[#17181B]/70 border border-transparent'
+                                ? 'bg-[#18191E] border border-[#2A2C33] shadow-xs'
+                                : 'hover:bg-[#16171B] border border-transparent'
                             }`}
                           >
-                            <div className="flex items-center gap-2 overflow-hidden mr-2">
-                              <span className="text-gray-500 text-xs font-pretty-mono font-[300] shrink-0">
+                            <div className="flex items-center gap-1.5 overflow-hidden mr-2 min-w-0">
+                              <span className="text-gray-500 text-[11px] font-pretty-mono font-[300] shrink-0 w-5 tabular-nums text-right select-none mr-0.5">
                                 {topic.order}.
                               </span>
-                              <span className="text-xs sm:text-[13px] font-medium tracking-normal truncate text-gray-100 group-hover:text-white">
+                              <span
+                                className={`text-xs sm:text-[13px] font-normal tracking-normal truncate transition-colors ${
+                                  isSelected
+                                    ? 'text-gray-100'
+                                    : 'text-gray-300 group-hover:text-white'
+                                }`}
+                              >
                                 {topic.name}
                               </span>
                             </div>
@@ -232,7 +238,7 @@ export function TopicSidebar({
                                     ? 'text-emerald-400'
                                     : isSelected
                                     ? 'text-gray-300'
-                                    : 'text-gray-600'
+                                    : 'text-gray-500'
                                 }`}
                               >
                                 {stats.completed}/{stats.total}
@@ -261,17 +267,23 @@ export function TopicSidebar({
                     onSelectTopic(topic.id);
                     onCloseMobile?.();
                   }}
-                  className={`w-full text-left flex items-center justify-between px-3 py-2 rounded-lg cursor-pointer transition-all whitespace-nowrap lg:whitespace-normal group ${
+                  className={`w-full text-left flex items-center justify-between px-2.5 py-1.5 rounded-md cursor-pointer transition-all whitespace-nowrap lg:whitespace-normal group ${
                     isSelected
-                      ? 'bg-[#17181B] text-gray-100 border border-[#292A2E] shadow-xs'
-                      : 'text-gray-400 hover:text-gray-200 hover:bg-[#17181B]/70 border border-transparent'
+                      ? 'bg-[#18191E] border border-[#2A2C33] shadow-xs'
+                      : 'hover:bg-[#16171B] border border-transparent'
                   }`}
                 >
-                  <div className="flex items-center gap-2 overflow-hidden mr-2">
-                    <span className="text-gray-500 text-xs font-pretty-mono font-[300] shrink-0">
+                  <div className="flex items-center gap-1.5 overflow-hidden mr-2 min-w-0">
+                    <span className="text-gray-500 text-[11px] font-pretty-mono font-[300] shrink-0 w-5 tabular-nums text-right select-none mr-0.5">
                       {topic.order}.
                     </span>
-                    <span className="text-xs sm:text-[13px] font-medium tracking-normal truncate text-gray-100 group-hover:text-white">
+                    <span
+                      className={`text-xs sm:text-[13px] font-normal tracking-normal truncate transition-colors ${
+                        isSelected
+                          ? 'text-gray-100'
+                          : 'text-gray-300 group-hover:text-white'
+                      }`}
+                    >
                       {topic.name}
                     </span>
                   </div>
@@ -283,7 +295,7 @@ export function TopicSidebar({
                           ? 'text-emerald-400'
                           : isSelected
                           ? 'text-gray-300'
-                          : 'text-gray-600'
+                          : 'text-gray-500'
                       }`}
                     >
                       {stats.completed}/{stats.total}
@@ -315,8 +327,8 @@ export function TopicSidebar({
                 }}
                 className={`w-full text-left flex items-center justify-between px-2.5 py-2 rounded-lg cursor-pointer transition-all group ${
                   isSelected
-                    ? 'bg-[#17181B] border border-[#292A2E] shadow-xs'
-                    : 'hover:bg-[#17181B]/70 border border-transparent'
+                    ? 'bg-[#18191E] border border-[#2A2C33] shadow-xs'
+                    : 'hover:bg-[#16171B] border border-transparent'
                 }`}
               >
                 <div className="flex items-center gap-2.5 overflow-hidden mr-2 min-w-0">
@@ -331,7 +343,11 @@ export function TopicSidebar({
 
                   {/* Company Name & Total Count */}
                   <div className="min-w-0 truncate">
-                    <div className="text-xs sm:text-[13px] font-medium tracking-normal truncate text-gray-100 group-hover:text-white">
+                    <div
+                      className={`text-xs sm:text-[13px] font-normal tracking-normal truncate transition-colors ${
+                        isSelected ? 'text-gray-100' : 'text-gray-300 group-hover:text-white'
+                      }`}
+                    >
                       {company.name}
                     </div>
                     <div className="text-[10px] font-pretty-mono text-gray-500">

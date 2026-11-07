@@ -78,29 +78,29 @@ export function CompanyDossierHeader({
   return (
     <div
       className={`shrink-0 bg-[#121316] border-b border-[#25272C] transition-all duration-200 font-pretty ${
-        isCollapsed ? "py-2.5 px-3.5 sm:px-6" : "p-4 sm:p-5"
+        isCollapsed ? "py-2.5 px-3.5 sm:px-6" : "p-3.5 sm:p-4.5"
       }`}
     >
       {/* Top Banner: Monogram, Company Title & Interview Progress + Dropdown Key ^ */}
       <div
         className={`flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 ${
-          isCollapsed ? "mb-0" : "mb-3.5"
+          isCollapsed ? "mb-0" : "mb-3"
         }`}
       >
         {/* Left: Identity */}
         <div className="flex items-center gap-3 sm:gap-3.5 min-w-0">
           <div
-            className={`rounded-lg bg-[#17181B] border border-[#292A2E] flex items-center justify-center font-pretty-mono font-[300] text-emerald-400 shrink-0 shadow-sm transition-all ${
+            className={`rounded-lg bg-[#16171A] border border-[#24262C] flex items-center justify-center font-pretty-mono font-[300] text-emerald-400 shrink-0 shadow-xs transition-all ${
               isCollapsed
                 ? "w-8 h-8 text-xs sm:w-9 sm:h-9 sm:text-sm"
-                : "w-10 h-10 sm:w-11 sm:h-11 text-sm sm:text-base"
+                : "w-9 h-9 sm:w-10 sm:h-10 text-sm sm:text-base"
             }`}
           >
             {monogram}
           </div>
           <div className="min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
-              <h2 className="text-base sm:text-lg lg:text-xl font-medium text-gray-100 tracking-wide truncate">
+              <h2 className="text-base sm:text-lg lg:text-xl font-normal text-gray-100 tracking-tight truncate">
                 {company.name}
               </h2>
               <span className="text-[10px] font-pretty-mono font-[300] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shrink-0">
