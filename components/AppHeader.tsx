@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 import { Search, CheckCircle2, X } from "lucide-react";
 import { TrackerMode } from "@/lib/types";
 
@@ -31,14 +32,18 @@ export function AppHeader({
       <div className="w-full max-w-[1920px] mx-auto flex flex-col md:flex-row items-center justify-between gap-2.5 md:gap-4">
         {/* Brand & Progress */}
         <div className="flex items-center gap-3 sm:gap-4 w-full md:w-auto justify-between md:justify-start">
-          <div className="flex items-center gap-2.5 sm:gap-3">
-            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-md bg-[#17181B] border border-[#292A2E] flex items-center justify-center text-xs sm:text-sm font-semibold text-emerald-400 tracking-wider">
+          <Link
+            href="/home"
+            className="flex items-center gap-2.5 sm:gap-3 group cursor-pointer transition-opacity hover:opacity-90"
+            title="Go to Landing Page"
+          >
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-md bg-[#17181B] border border-[#292A2E] flex items-center justify-center text-xs sm:text-sm font-semibold text-emerald-400 tracking-wider transition-colors group-hover:border-emerald-500/50">
               {"{ }"}
             </div>
-            <h1 className="text-base sm:text-lg font-bold text-gray-100 tracking-tight select-none">
+            <h1 className="font-pretty font-[300] text-base sm:text-lg text-gray-100 tracking-wide select-none">
               DSASheeeet
             </h1>
-          </div>
+          </Link>
 
           {/* Restrained Progress Indicator */}
           <div className="flex items-center gap-2 sm:gap-2.5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-md bg-[#17181B] border border-[#292A2E]">

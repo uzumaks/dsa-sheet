@@ -6,7 +6,8 @@ import { AppHeader } from '@/components/AppHeader';
 import { TopicSidebar } from '@/components/TopicSidebar';
 import { DifficultyFilter } from '@/components/DifficultyFilter';
 import { ProblemList } from '@/components/ProblemList';
-import { Loader2, AlertCircle, AlertTriangle, Menu, X } from 'lucide-react';
+import { AppSkeleton } from '@/components/AppSkeleton';
+import { AlertCircle, AlertTriangle, Menu, X } from 'lucide-react';
 
 export default function Home() {
   const {
@@ -48,14 +49,7 @@ export default function Home() {
   const [isMobileNavOpen, setIsMobileNavOpen] = useState<boolean>(false);
 
   if (isLoading) {
-    return (
-      <div className="h-screen bg-[#101113] flex flex-col items-center justify-center text-gray-400 gap-3">
-        <Loader2 className="w-5 h-5 animate-spin text-emerald-400" />
-        <span className="text-xs font-mono tracking-wider text-gray-400">
-          Loading DSASheeeet...
-        </span>
-      </div>
-    );
+    return <AppSkeleton />;
   }
 
   if (dbError) {

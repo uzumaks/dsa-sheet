@@ -231,44 +231,28 @@ export default function LandingPage() {
   }, [activeTab, mockProblems]);
 
   return (
-    <>
-      {/* High-elegance font imports: Urbanist (extra-thin to normal) and JetBrains Mono (thin to normal) */}
-      <link rel="preconnect" href="https://fonts.googleapis.com" />
-      <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-      <link
-        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@200;300;400;500&family=Urbanist:ital,wght@0,100;0,200;0,300;0,400;0,500;1,200;1,300&display=swap"
-        rel="stylesheet"
-      />
-
-      <style jsx global>{`
-        .font-pretty {
-          font-family: 'Urbanist', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-          letter-spacing: -0.015em;
-        }
-        .font-pretty-mono {
-          font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
-        }
-      `}</style>
-
-      <div className="font-pretty fixed inset-0 overflow-y-auto bg-[#101113] text-[#F3F4F6] custom-scrollbar selection:bg-emerald-950/70 selection:text-emerald-200">
-        {/* Top Navigation */}
-        <header className="sticky top-0 z-50 w-full bg-[#101113]/85 backdrop-blur-md border-b border-[#25272C]">
-          <div className="w-full max-w-[1920px] mx-auto px-4 sm:px-8 lg:px-12 2xl:px-16 h-16 2xl:h-20 flex items-center justify-between">
-            {/* Logo & Status */}
-            <div className="flex items-center gap-3">
-              <Link href="/" className="flex items-center gap-2.5 group">
-                <div className="w-8 h-8 rounded-md bg-[#17181B] border border-[#292A2E] flex items-center justify-center text-xs font-pretty-mono font-[300] text-emerald-400 tracking-wider transition-colors group-hover:border-emerald-500/50">
-                  {"{ }"}
-                </div>
-                <span className="text-base font-[300] tracking-wide text-gray-100">
-                  DSASheeeet
-                </span>
-              </Link>
-              <span className="hidden sm:inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[11px] font-pretty-mono font-[300] text-emerald-400">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                offline-ready v2.4
+    <div className="font-pretty fixed inset-0 overflow-y-auto bg-[#101113] text-[#F3F4F6] custom-scrollbar selection:bg-emerald-950/70 selection:text-emerald-200">
+      {/* Top Navigation */}
+      <header className="sticky top-0 z-50 w-full bg-[#101113]/85 backdrop-blur-md border-b border-[#25272C]">
+        <div className="w-full max-w-[1920px] mx-auto px-4 sm:px-8 lg:px-12 2xl:px-16 h-16 2xl:h-20 flex items-center justify-between">
+          {/* Logo & Status */}
+          <div className="flex items-center gap-3">
+            <Link
+              href="/"
+              className="flex items-center gap-2.5 sm:gap-3 group cursor-pointer transition-opacity hover:opacity-90"
+              title="Go to Practice Workspace"
+            >
+              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-md bg-[#17181B] border border-[#292A2E] flex items-center justify-center text-xs sm:text-sm font-semibold text-emerald-400 tracking-wider transition-colors group-hover:border-emerald-500/50">
+                {"{ }"}
+              </div>
+              <span className="font-pretty font-[300] text-base sm:text-lg text-gray-100 tracking-wide select-none">
+                DSASheeeet
               </span>
-            </div>
+            </Link>
+            <span className="hidden sm:inline-flex items-center px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[11px] font-pretty-mono font-[300] text-emerald-400">
+              V1.1.1
+            </span>
+          </div>
 
             {/* Links */}
             <nav className="hidden md:flex items-center gap-8 2xl:gap-10 text-sm 2xl:text-base font-[300] text-gray-400">
@@ -967,6 +951,5 @@ export default function LandingPage() {
           </section>
         </main>
       </div>
-    </>
   );
 }
