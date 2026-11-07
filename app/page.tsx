@@ -194,9 +194,9 @@ export default function Home() {
       )}
 
       {/* Main Container: Desktop Sidebar + Content */}
-      <div className="flex-1 min-h-0 flex flex-col lg:flex-row max-w-7xl w-full mx-auto overflow-hidden">
+      <div className="flex-1 min-h-0 flex flex-col lg:flex-row w-full max-w-[1920px] mx-auto overflow-hidden">
         {/* Desktop Sidebar (hidden on mobile, visible on lg+) */}
-        <div className="hidden lg:flex shrink-0 w-72 xl:w-80 h-full min-h-0 overflow-hidden">
+        <div className="hidden lg:flex shrink-0 w-72 xl:w-80 2xl:w-96 h-full min-h-0 overflow-hidden">
           <TopicSidebar
             mode={mode}
             topics={topics}

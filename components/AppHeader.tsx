@@ -27,8 +27,8 @@ export function AppHeader({
     mode === "company" ? "Search for a company..." : "Search for a problem...";
 
   return (
-    <header className="sticky top-0 z-30 w-full bg-[#101113]/90 backdrop-blur-md border-b border-[#292A2E] px-4 sm:px-6 py-2.5 transition-colors">
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-2.5 md:gap-4">
+    <header className="sticky top-0 z-30 w-full bg-[#101113]/90 backdrop-blur-md border-b border-[#292A2E] px-4 sm:px-6 lg:px-8 2xl:px-12 py-2.5 transition-colors">
+      <div className="w-full max-w-[1920px] mx-auto flex flex-col md:flex-row items-center justify-between gap-2.5 md:gap-4">
         {/* Brand & Progress */}
         <div className="flex items-center gap-3 sm:gap-4 w-full md:w-auto justify-between md:justify-start">
           <div className="flex items-center gap-2.5 sm:gap-3">
