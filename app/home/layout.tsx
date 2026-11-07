@@ -1,44 +1,9 @@
 import type { Metadata } from "next";
 
-const siteUrl = "https://dsasheeeet.vercel.app";
-
 export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
   title: "DSASheeeet | DSA Practice Workspace for Patterns and Companies",
   description:
     "Master Data Structures and Algorithms with DSASheeeet, a focused DSA practice workspace featuring 41 patterns, 423 companies, and 17K+ company-wise problem entries. Track solved questions, organize practice by difficulty and topic, save personal notes, and monitor your progress in one distraction-free workspace.",
-  applicationName: "DSASheeeet",
-  keywords: [
-    "DSASheeeet",
-    "DSA Sheet",
-    "DSA Tracker",
-    "LeetCode Patterns",
-    "Company Wise DSA",
-    "Data Structures and Algorithms",
-    "Coding Interview Preparation",
-    "Two Pointers",
-    "Sliding Window",
-    "Dynamic Programming",
-    "Binary Search",
-  ],
-  authors: [{ name: "Aayush Kashyap" }],
-  creator: "Aayush Kashyap",
-  publisher: "Aayush Kashyap",
-  formatDetection: {
-    email: false,
-    address: false,
-    telephone: false,
-  },
-  icons: {
-    icon: [
-      { url: "/icon.png", sizes: "512x512", type: "image/png" },
-      { url: "/favicon.ico", sizes: "any" },
-    ],
-    shortcut: "/favicon.ico",
-    apple: [
-      { url: "/apple-touch-icon.png", sizes: "512x512", type: "image/png" },
-    ],
-  },
   openGraph: {
     title: "DSASheeeet | Your DSA Practice Workspace",
     description:
@@ -85,4 +50,3 @@ export default function LandingLayout({
 }) {
   return <>{children}</>;
 }
-

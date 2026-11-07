@@ -3,7 +3,7 @@
 import React from 'react';
 import { DisplayProblem, Difficulty } from '@/lib/types';
 import { NotesEditor } from './NotesEditor';
-import { Check, Plus, Minus, ExternalLink } from 'lucide-react';
+import { Check, Plus, Minus, ExternalLink, Tag } from 'lucide-react';
 
 interface ProblemRowProps {
   problem: DisplayProblem;
@@ -47,9 +47,9 @@ export function ProblemRow({
         problem.completed ? 'bg-[#121316]/60' : 'bg-[#141518] hover:bg-[#18191E]'
       }`}
     >
-      <div className="flex items-center justify-between gap-3 px-3.5 sm:px-6 py-2.5 sm:py-3 min-h-[48px]">
+      <div className="flex items-start sm:items-center justify-between gap-3 px-3.5 sm:px-6 py-2.5 sm:py-3 min-h-[48px]">
         {/* Checkbox & Serial Number & Title */}
-        <div className="flex items-center gap-3 sm:gap-3.5 min-w-0 flex-1">
+        <div className="flex items-start sm:items-center gap-3 sm:gap-3.5 min-w-0 flex-1">
           {/* Completion Checkbox */}
           <button
             type="button"
@@ -57,7 +57,7 @@ export function ProblemRow({
               e.stopPropagation();
               onToggleComplete(problem.id);
             }}
-            className={`w-5 h-5 rounded-[5px] shrink-0 flex items-center justify-center transition-all cursor-pointer ${
+            className={`w-5 h-5 rounded-[5px] shrink-0 mt-0.5 sm:mt-0 flex items-center justify-center transition-all cursor-pointer ${
               problem.completed
                 ? 'bg-emerald-500 text-[#101113] border border-emerald-500 shadow-xs'
                 : 'bg-[#17181B] border border-[#2D3036] hover:border-emerald-500/60 text-transparent'
@@ -68,46 +68,74 @@ export function ProblemRow({
           </button>
 
           {/* Serial Number & Title */}
-          <div className="min-w-0 flex-1 flex items-center gap-2">
-            <span className="text-gray-500 text-xs sm:text-sm font-pretty-mono font-[300] shrink-0 select-none">
-              {visualNumber}.
-            </span>
-
-            {problem.url ? (
-              <a
-                href={problem.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`text-[13.5px] sm:text-[14.5px] font-normal tracking-normal truncate transition-colors leading-normal ${
-                  problem.completed
-                    ? 'text-gray-500 line-through decoration-gray-600 hover:text-gray-300'
-                    : 'text-gray-100 hover:text-emerald-400'
-                }`}
-                title={`Open "${problem.title}" on LeetCode`}
-              >
-                {problem.title}
-              </a>
-            ) : (
-              <span
-                className={`text-[13.5px] sm:text-[14.5px] font-normal tracking-normal truncate leading-normal ${
-                  problem.completed ? 'text-gray-500 line-through' : 'text-gray-100'
-                }`}
-              >
-                {problem.title}
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
+              <span className="text-gray-500 text-xs sm:text-sm font-pretty-mono font-[300] shrink-0 select-none">
+                {visualNumber}.
               </span>
-            )}
 
-            {problem.url && (
-              <a
-                href={problem.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="opacity-0 group-hover:opacity-60 hover:!opacity-100 text-gray-400 transition-opacity p-0.5 shrink-0"
-                title="Open LeetCode problem in new tab"
-                aria-label="Open LeetCode problem"
-              >
-                <ExternalLink className="w-3.5 h-3.5 stroke-[1.5]" />
-              </a>
+              {problem.url ? (
+                <a
+                  href={problem.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`text-[13.5px] sm:text-[14.5px] font-medium tracking-normal truncate transition-colors leading-normal ${
+                    problem.completed
+                      ? 'text-gray-500 line-through decoration-gray-600 hover:text-gray-300'
+                      : 'text-gray-100 hover:text-emerald-400'
+                  }`}
+                  title={`Open "${problem.title}" on LeetCode`}
+                >
+                  {problem.title}
+                </a>
+              ) : (
+                <span
+                  className={`text-[13.5px] sm:text-[14.5px] font-medium tracking-normal truncate leading-normal ${
+                    problem.completed ? 'text-gray-500 line-through' : 'text-gray-100'
+                  }`}
+                >
+                  {problem.title}
+                </span>
+              )}
+
+              {problem.url && (
+                <a
+                  href={problem.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="opacity-0 group-hover:opacity-60 hover:!opacity-100 text-gray-400 transition-opacity p-0.5 shrink-0"
+                  title="Open LeetCode problem in new tab"
+                  aria-label="Open LeetCode problem"
+                >
+                  <ExternalLink className="w-3.5 h-3.5 stroke-[1.5]" />
+                </a>
+              )}
+
+              {/* In Company mode: Show which topic this question tests */}
+              {problem.topics && problem.topics.length > 0 && (
+                <div className="hidden md:flex items-center gap-1 shrink-0 ml-1">
+                  {problem.topics.slice(0, 2).map((t) => (
+                    <span
+                      key={t}
+                      className="text-[10px] font-pretty-mono font-[300] px-1.5 py-0.5 rounded bg-[#1A1B20] text-gray-400 border border-[#25272C]"
+                    >
+                      {t}
+                    </span>
+                  ))}
+                  {problem.topics.length > 2 && (
+                    <span className="text-[10px] font-pretty-mono text-gray-600">
+                      +{problem.topics.length - 2}
+                    </span>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Intuition note preview if present and editor is collapsed */}
+            {hasNotes && !isNotesExpanded && (
+              <p className="text-xs font-[300] text-gray-500 mt-0.5 line-clamp-1 italic">
+                Intuition: {problem.notes}
+              </p>
             )}
           </div>
         </div>

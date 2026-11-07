@@ -7,6 +7,8 @@ import { TopicSidebar } from '@/components/TopicSidebar';
 import { DifficultyFilter } from '@/components/DifficultyFilter';
 import { ProblemList } from '@/components/ProblemList';
 import { AppSkeleton } from '@/components/AppSkeleton';
+import { CompanyDossierHeader } from '@/components/CompanyDossierHeader';
+import { TopicDossierHeader } from '@/components/TopicDossierHeader';
 import { AlertCircle, AlertTriangle, Menu, X } from 'lucide-react';
 
 export default function Home() {
@@ -47,6 +49,7 @@ export default function Home() {
   } = useDSAStore();
 
   const [isMobileNavOpen, setIsMobileNavOpen] = useState<boolean>(false);
+  const [viewLayout, setViewLayout] = useState<'stream' | 'grouped'>('stream');
 
   if (isLoading) {
     return <AppSkeleton />;
@@ -207,26 +210,38 @@ export default function Home() {
 
         {/* Problem List Main View (Independent Scroll Container) */}
         <main className="flex-1 min-h-0 h-full flex flex-col min-w-0 bg-[#141518] overflow-hidden">
-          {/* Active Header bar */}
-          <div className="h-11 shrink-0 px-3.5 sm:px-6 bg-[#101113] border-b border-[#25272C] flex items-center justify-between">
-            <div className="flex items-center gap-2.5 overflow-hidden">
-              <h2 className="text-xs sm:text-sm font-normal tracking-wide text-gray-100 truncate">
-                {isTopicSearching ? `Search: "${searchQuery}"` : activeTitle}
-              </h2>
-              {activeStats && !isTopicSearching && (
-                <span className="text-xs text-gray-400 tabular-nums shrink-0 font-pretty-mono font-[300] px-2 py-0.5 rounded-full bg-[#17181B] border border-[#25272C]">
-                  {activeStats.completed} / {activeStats.total} completed
-                </span>
-              )}
-            </div>
-            {isTopicSearching && (
+          {/* Company Dossier Header or Topic Dossier Header */}
+          {isTopicSearching ? (
+            <div className="h-11 shrink-0 px-3.5 sm:px-6 bg-[#101113] border-b border-[#25272C] flex items-center justify-between">
+              <div className="flex items-center gap-2.5 overflow-hidden">
+                <h2 className="text-xs sm:text-sm font-normal tracking-wide text-gray-100 truncate">
+                  Search: &ldquo;{searchQuery}&rdquo;
+                </h2>
+              </div>
               <span className="text-xs text-emerald-400/90 tabular-nums shrink-0 font-pretty-mono font-[300]">
                 {displayedProblems.length} results
               </span>
-            )}
-          </div>
+            </div>
+          ) : mode === 'company' && activeCompany ? (
+            <CompanyDossierHeader
+              company={activeCompany}
+              problems={displayedProblems}
+              completedCount={activeStats?.completed || 0}
+              totalCount={activeCompany.totalCount}
+              availableTopics={availableCompanyTopics}
+              selectedTopic={companyTopicFilter}
+              onTopicChange={setCompanyTopicFilter}
+            />
+          ) : (
+            <TopicDossierHeader
+              topic={activeTopic}
+              problems={displayedProblems}
+              completedCount={activeStats?.completed || 0}
+              totalCount={activeStats?.total || 0}
+            />
+          )}
 
-          {/* Compact Filter Toolbar with Custom Topic Dropdown */}
+          {/* Compact Filter Toolbar with Custom Topic Dropdown & View Mode */}
           <div className="shrink-0">
             <DifficultyFilter
               difficulty={difficultyFilter}
@@ -239,6 +254,8 @@ export default function Home() {
               availableTopics={mode === 'company' ? availableCompanyTopics : undefined}
               selectedTopic={companyTopicFilter}
               onTopicChange={setCompanyTopicFilter}
+              viewLayout={viewLayout}
+              onViewLayoutChange={setViewLayout}
             />
           </div>
 
@@ -252,6 +269,7 @@ export default function Home() {
               searchQuery={searchQuery}
               difficultyFilter={difficultyFilter}
               statusFilter={statusFilter}
+              viewLayout={viewLayout}
               onToggleComplete={toggleComplete}
               onToggleNotes={toggleNotes}
               onSaveNotes={updateNotes}

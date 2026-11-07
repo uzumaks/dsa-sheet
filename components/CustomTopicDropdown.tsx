@@ -90,8 +90,8 @@ export function CustomTopicDropdown({
             }}
             className={`w-full text-left px-2.5 py-1.5 rounded-md flex items-center justify-between transition-colors cursor-pointer ${
               selectedTopic === 'all'
-                ? 'bg-[#25272C] text-emerald-400 font-[400]'
-                : 'text-gray-300 hover:bg-[#25272C] hover:text-white font-[300]'
+                ? 'bg-[#25272C] text-emerald-400 font-medium'
+                : 'text-gray-300 hover:bg-[#25272C] hover:text-white font-normal'
             }`}
           >
             <span>All Topics ({availableTopics.length})</span>
@@ -113,8 +113,8 @@ export function CustomTopicDropdown({
                 }}
                 className={`w-full text-left px-2.5 py-1.5 rounded-md flex items-center justify-between transition-colors cursor-pointer ${
                   isSelected
-                    ? 'bg-[#25272C] text-emerald-400 font-[400]'
-                    : 'text-gray-300 hover:bg-[#25272C] hover:text-white font-[300]'
+                    ? 'bg-[#25272C] text-emerald-400 font-medium'
+                    : 'text-gray-300 hover:bg-[#25272C] hover:text-white font-normal'
                 }`}
               >
                 <span className="truncate mr-2">{topic}</span>

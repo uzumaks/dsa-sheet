@@ -4,6 +4,7 @@ import React from 'react';
 import { DifficultyFilter as DiffFilterType, StatusFilter, SortOption } from '@/lib/types';
 import { CustomTopicDropdown } from './CustomTopicDropdown';
 import { CustomSortDropdown } from './CustomSortDropdown';
+import { Rows, LayoutGrid } from 'lucide-react';
 
 interface DifficultyFilterProps {
   difficulty: DiffFilterType;
@@ -16,6 +17,8 @@ interface DifficultyFilterProps {
   availableTopics?: string[];
   selectedTopic?: string;
   onTopicChange?: (topic: string) => void;
+  viewLayout?: 'stream' | 'grouped';
+  onViewLayoutChange?: (v: 'stream' | 'grouped') => void;
 }
 
 export function DifficultyFilter({
@@ -29,6 +32,8 @@ export function DifficultyFilter({
   availableTopics,
   selectedTopic,
   onTopicChange,
+  viewLayout = 'stream',
+  onViewLayoutChange,
 }: DifficultyFilterProps) {
   return (
     <div className="flex flex-wrap lg:flex-nowrap items-center justify-between gap-2.5 py-2 px-3.5 sm:px-6 bg-[#141518] border-b border-[#25272C] text-xs font-pretty">
@@ -95,7 +100,7 @@ export function DifficultyFilter({
         )}
       </div>
 
-      {/* Right side: Status Filter + Custom Sort Dropdown + Count */}
+      {/* Right side: Status Filter + View Toggle + Custom Sort Dropdown + Count */}
       <div className="flex items-center gap-2 shrink-0">
         {/* Status Filter */}
         <div className="flex items-center gap-0.5 bg-[#17181B] border border-[#25272C] rounded-md p-0.5 h-7.5">
@@ -133,6 +138,36 @@ export function DifficultyFilter({
             Done
           </button>
         </div>
+
+        {/* Stream vs Grouped View Layout Toggle */}
+        {onViewLayoutChange && (
+          <div className="hidden sm:flex items-center gap-0.5 bg-[#17181B] border border-[#25272C] rounded-md p-0.5 h-7.5">
+            <button
+              type="button"
+              onClick={() => onViewLayoutChange('stream')}
+              className={`p-1.5 h-full rounded transition-colors cursor-pointer ${
+                viewLayout === 'stream'
+                  ? 'bg-[#25272C] text-emerald-400'
+                  : 'text-gray-500 hover:text-gray-300'
+              }`}
+              title="Continuous linear stream"
+            >
+              <Rows className="w-3.5 h-3.5 stroke-[1.5]" />
+            </button>
+            <button
+              type="button"
+              onClick={() => onViewLayoutChange('grouped')}
+              className={`p-1.5 h-full rounded transition-colors cursor-pointer ${
+                viewLayout === 'grouped'
+                  ? 'bg-[#25272C] text-emerald-400'
+                  : 'text-gray-500 hover:text-gray-300'
+              }`}
+              title="Grouped by difficulty"
+            >
+              <LayoutGrid className="w-3.5 h-3.5 stroke-[1.5]" />
+            </button>
+          </div>
+        )}
 
         {/* Custom Sort Dropdown */}
         <CustomSortDropdown sort={sort} onSortChange={onSortChange} />
