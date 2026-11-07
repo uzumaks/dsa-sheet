@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, startTransition } from 'react';
 import { db } from './db';
 import { seedDatabaseIfEmpty } from './seed';
 import {
@@ -136,9 +136,11 @@ export function useDSAStore() {
     loadData();
   }, [loadData]);
 
-  // Mode toggler
+  // Mode toggler with non-blocking concurrent transition
   const setMode = useCallback((newMode: TrackerMode) => {
-    setModeState(newMode);
+    startTransition(() => {
+      setModeState(newMode);
+    });
     saveStoredTrackerMode(newMode);
   }, []);
 
@@ -348,20 +350,25 @@ export function useDSAStore() {
     return Array.from(set).sort((a, b) => a.localeCompare(b));
   }, [mode, companyProblemsMap, selectedCompanyId]);
 
-  // Total counts based on mode
-  const totalCompletedCount = useMemo(() => {
-    if (mode === 'topic') {
-      return problems.filter((p) => p.completed).length;
+  // Pre-calculated decoupled counts for O(1) instantaneous mode switching
+  const topicCompletedCount = useMemo(() => {
+    let count = 0;
+    for (let i = 0; i < problems.length; i++) {
+      if (problems[i].completed) count++;
     }
-    return companyProblems.filter((p) => p.completed).length;
-  }, [mode, problems, companyProblems]);
+    return count;
+  }, [problems]);
 
-  const totalProblemsCount = useMemo(() => {
-    if (mode === 'topic') {
-      return problems.length;
+  const companyCompletedCount = useMemo(() => {
+    let count = 0;
+    for (let i = 0; i < companyProblems.length; i++) {
+      if (companyProblems[i].completed) count++;
     }
-    return companyProblems.length;
-  }, [mode, problems, companyProblems]);
+    return count;
+  }, [companyProblems]);
+
+  const totalCompletedCount = mode === 'topic' ? topicCompletedCount : companyCompletedCount;
+  const totalProblemsCount = mode === 'topic' ? problems.length : companyProblems.length;
 
   // Displayed problems derivation
   const displayedProblems: DisplayProblem[] = useMemo(() => {

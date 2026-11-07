@@ -29,7 +29,7 @@ const difficultyStyles: Record<Difficulty, { tag: string; label: string }> = {
   },
 };
 
-export function ProblemRow({
+export const ProblemRow = React.memo(function ProblemRow({
   problem,
   displayIndex,
   isNotesExpanded,
@@ -189,4 +189,4 @@ export function ProblemRow({
       )}
     </div>
   );
-}
+});

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect, useRef } from 'react';
 import { Topic, Company, TrackerMode } from '@/lib/types';
 import { Layers, Building2, Flame, Award, ChevronDown, Check } from 'lucide-react';
 
@@ -71,6 +71,11 @@ export function TopicSidebar({
   // Company filter quick tier: 'all' vs 'top'
   const [companyTier, setCompanyTier] = useState<'all' | 'top'>('all');
 
+  // Progressive rendering for company cards for instantaneous mode switching
+  const COMPANY_CHUNK_SIZE = 50;
+  const [visibleCompanyCount, setVisibleCompanyCount] = useState<number>(COMPANY_CHUNK_SIZE);
+  const companySentinelRef = useRef<HTMLDivElement | null>(null);
+
   // Filter companies
   const filteredCompanies = useMemo(() => {
     if (mode !== 'company') return companies;
@@ -87,6 +92,35 @@ export function TopicSidebar({
 
     return list.filter((c) => c.name.toLowerCase().includes(q));
   }, [mode, companies, companyTier, searchQuery]);
+
+  // Reset visible company count when filter or mode changes
+  useEffect(() => {
+    setVisibleCompanyCount(COMPANY_CHUNK_SIZE);
+  }, [mode, companyTier, searchQuery]);
+
+  // Load next batch of companies as user scrolls down sidebar
+  useEffect(() => {
+    if (mode !== 'company' || visibleCompanyCount >= filteredCompanies.length) return;
+    const sentinel = companySentinelRef.current;
+    if (!sentinel) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setVisibleCompanyCount((prev) => Math.min(prev + COMPANY_CHUNK_SIZE, filteredCompanies.length));
+        }
+      },
+      { rootMargin: '300px' }
+    );
+
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [mode, visibleCompanyCount, filteredCompanies.length]);
+
+  const visibleCompanies = useMemo(() => {
+    if (filteredCompanies.length <= COMPANY_CHUNK_SIZE) return filteredCompanies;
+    return filteredCompanies.slice(0, visibleCompanyCount);
+  }, [filteredCompanies, visibleCompanyCount]);
 
   return (
     <aside className="w-full h-full min-h-0 flex flex-col bg-[#101113] border-b lg:border-b-0 lg:border-r border-[#25272C] overflow-hidden select-none font-pretty">
@@ -306,78 +340,85 @@ export function TopicSidebar({
             })
           )
         ) : (
-          // Company Cards with Monograms & Progress
-          filteredCompanies.map((company, index) => {
-            const isSelected = selectedCompanyId === company.id;
-            const stats = companyStats.get(company.id) || {
-              completed: 0,
-              total: company.totalCount,
-            };
-            const isAllCompleted = stats.total > 0 && stats.completed === stats.total;
-            const monogram = company.name.substring(0, 2).toUpperCase();
-            const percent = company.totalCount > 0 ? Math.round((stats.completed / company.totalCount) * 100) : 0;
+          // Company Cards with Monograms & Progress (Progressively Chunked)
+          <>
+            {visibleCompanies.map((company) => {
+              const isSelected = selectedCompanyId === company.id;
+              const stats = companyStats.get(company.id) || {
+                completed: 0,
+                total: company.totalCount,
+              };
+              const isAllCompleted = stats.total > 0 && stats.completed === stats.total;
+              const monogram = company.name.substring(0, 2).toUpperCase();
+              const percent = company.totalCount > 0 ? Math.round((stats.completed / company.totalCount) * 100) : 0;
 
-            return (
-              <button
-                key={company.id}
-                type="button"
-                onClick={() => {
-                  onSelectCompany(company.id);
-                  onCloseMobile?.();
-                }}
-                className={`w-full text-left flex items-center justify-between px-2.5 py-2 rounded-lg cursor-pointer transition-all group ${
-                  isSelected
-                    ? 'bg-[#18191E] border border-[#2A2C33] shadow-xs'
-                    : 'hover:bg-[#16171B] border border-transparent'
-                }`}
-              >
-                <div className="flex items-center gap-2.5 overflow-hidden mr-2 min-w-0">
-                  {/* Monogram Box */}
-                  <div className={`w-7 h-7 rounded bg-[#1C1D21] border flex items-center justify-center font-pretty-mono text-[10px] shrink-0 transition-colors ${
+              return (
+                <button
+                  key={company.id}
+                  type="button"
+                  onClick={() => {
+                    onSelectCompany(company.id);
+                    onCloseMobile?.();
+                  }}
+                  className={`w-full text-left flex items-center justify-between px-2.5 py-2 rounded-lg cursor-pointer transition-all group ${
                     isSelected
-                      ? 'border-emerald-500/40 text-emerald-400'
-                      : 'border-[#292A2E] text-gray-400 group-hover:text-gray-200'
-                  }`}>
-                    {monogram}
+                      ? 'bg-[#18191E] border border-[#2A2C33] shadow-xs'
+                      : 'hover:bg-[#16171B] border border-transparent'
+                  }`}
+                >
+                  <div className="flex items-center gap-2.5 overflow-hidden mr-2 min-w-0">
+                    {/* Monogram Box */}
+                    <div className={`w-7 h-7 rounded bg-[#1C1D21] border flex items-center justify-center font-pretty-mono text-[10px] shrink-0 transition-colors ${
+                      isSelected
+                        ? 'border-emerald-500/40 text-emerald-400'
+                        : 'border-[#292A2E] text-gray-400 group-hover:text-gray-200'
+                    }`}>
+                      {monogram}
+                    </div>
+
+                    {/* Company Name & Total Count */}
+                    <div className="min-w-0 truncate">
+                      <div
+                        className={`text-xs sm:text-[13px] font-normal tracking-normal truncate transition-colors ${
+                          isSelected ? 'text-gray-100' : 'text-gray-300 group-hover:text-white'
+                        }`}
+                      >
+                        {company.name}
+                      </div>
+                      <div className="text-[10px] font-pretty-mono text-gray-500">
+                        {company.totalCount} problems
+                      </div>
+                    </div>
                   </div>
 
-                  {/* Company Name & Total Count */}
-                  <div className="min-w-0 truncate">
-                    <div
-                      className={`text-xs sm:text-[13px] font-normal tracking-normal truncate transition-colors ${
-                        isSelected ? 'text-gray-100' : 'text-gray-300 group-hover:text-white'
+                  {/* Progress Pill / Percent */}
+                  <div className="flex flex-col items-end shrink-0">
+                    <span
+                      className={`text-xs tabular-nums font-pretty-mono font-[300] ${
+                        isAllCompleted
+                          ? 'text-emerald-400'
+                          : isSelected
+                          ? 'text-gray-300'
+                          : 'text-gray-500'
                       }`}
                     >
-                      {company.name}
-                    </div>
-                    <div className="text-[10px] font-pretty-mono text-gray-500">
-                      {company.totalCount} problems
-                    </div>
-                  </div>
-                </div>
-
-                {/* Progress Pill / Percent */}
-                <div className="flex flex-col items-end shrink-0">
-                  <span
-                    className={`text-xs tabular-nums font-pretty-mono font-[300] ${
-                      isAllCompleted
-                        ? 'text-emerald-400'
-                        : isSelected
-                        ? 'text-gray-300'
-                        : 'text-gray-500'
-                    }`}
-                  >
-                    {stats.completed}/{company.totalCount}
-                  </span>
-                  {percent > 0 && (
-                    <span className="text-[9px] font-pretty-mono text-emerald-400/90">
-                      {percent}%
+                      {stats.completed}/{company.totalCount}
                     </span>
-                  )}
-                </div>
-              </button>
-            );
-          })
+                    {percent > 0 && (
+                      <span className="text-[9px] font-pretty-mono text-emerald-400/90">
+                        {percent}%
+                      </span>
+                    )}
+                  </div>
+                </button>
+              );
+            })}
+            {visibleCompanyCount < filteredCompanies.length && (
+              <div ref={companySentinelRef} className="py-2 text-center text-[10px] font-pretty-mono text-gray-500">
+                Rendering {visibleCompanyCount} of {filteredCompanies.length} companies...
+              </div>
+            )}
+          </>
         )}
       </div>
     </aside>

@@ -99,8 +99,8 @@ export function AppHeader({
           <div className="flex items-center p-0.5 bg-[#17181B] border border-[#25272C] rounded-md shrink-0">
             <button
               type="button"
-              onClick={() => onModeChange("topic")}
-              className={`px-3 py-1 sm:py-1.5 text-xs font-[300] tracking-wide rounded transition-all cursor-pointer select-none ${
+              onClick={() => mode !== "topic" && onModeChange("topic")}
+              className={`px-3 py-1 sm:py-1.5 text-xs font-[300] tracking-wide rounded transition-colors duration-150 cursor-pointer select-none ${
                 mode === "topic"
                   ? "bg-[#25272C] text-emerald-400 font-[400] shadow-xs"
                   : "text-gray-400 hover:text-gray-200"
@@ -110,8 +110,8 @@ export function AppHeader({
             </button>
             <button
               type="button"
-              onClick={() => onModeChange("company")}
-              className={`px-3 py-1 sm:py-1.5 text-xs font-[300] tracking-wide rounded transition-all cursor-pointer select-none ${
+              onClick={() => mode !== "company" && onModeChange("company")}
+              className={`px-3 py-1 sm:py-1.5 text-xs font-[300] tracking-wide rounded transition-colors duration-150 cursor-pointer select-none ${
                 mode === "company"
                   ? "bg-[#25272C] text-emerald-400 font-[400] shadow-xs"
                   : "text-gray-400 hover:text-gray-200"

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, useEffect, useRef } from 'react';
 import { DisplayProblem, Topic, DifficultyFilter as DiffFilterType, StatusFilter } from '@/lib/types';
 import { ProblemRow } from './ProblemRow';
 import { EmptyState } from './EmptyState';
@@ -21,6 +21,8 @@ interface ProblemListProps {
   onResetDifficulty: () => void;
 }
 
+const PROBLEM_CHUNK_SIZE = 50;
+
 export function ProblemList({
   problems,
   activeTopic,
@@ -37,6 +39,34 @@ export function ProblemList({
   onResetDifficulty,
 }: ProblemListProps) {
   const currentTitle = activeTitle || activeTopic?.name || 'Problems';
+
+  // Progressive rendering state for instant mode switching & zero scroll latency
+  const [visibleCount, setVisibleCount] = useState<number>(PROBLEM_CHUNK_SIZE);
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
+
+  // Reset visibleCount whenever the problem set or view mode changes
+  useEffect(() => {
+    setVisibleCount(PROBLEM_CHUNK_SIZE);
+  }, [problems, viewLayout]);
+
+  // Load next chunk seamlessly when user scrolls near the bottom
+  useEffect(() => {
+    if (visibleCount >= problems.length) return;
+    const sentinel = sentinelRef.current;
+    if (!sentinel) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setVisibleCount((prev) => Math.min(prev + PROBLEM_CHUNK_SIZE, problems.length));
+        }
+      },
+      { rootMargin: '400px' }
+    );
+
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [visibleCount, problems.length]);
 
   // Group problems by difficulty if viewLayout is 'grouped' and filter is 'all'
   const groupedData = useMemo(() => {
@@ -115,11 +145,18 @@ export function ProblemList({
   // Render Grouped by Difficulty
   if (groupedData && groupedData.length > 0) {
     let continuousIndex = 1;
+    let renderedCount = 0;
+
     return (
       <div className="flex-1 divide-y divide-[#202125] bg-[#141518] font-pretty">
         {groupedData.map((group) => {
           const groupStartIndex = continuousIndex;
           continuousIndex += group.items.length;
+
+          const remainingAllowed = Math.max(0, visibleCount - renderedCount);
+          if (remainingAllowed === 0) return null;
+          const groupItems = group.items.slice(0, remainingAllowed);
+          renderedCount += groupItems.length;
 
           return (
             <div key={group.id} className="flex flex-col">
@@ -140,7 +177,7 @@ export function ProblemList({
 
               {/* Problem Rows in this group */}
               <div className="divide-y divide-[#202125]">
-                {group.items.map((problem, idx) => (
+                {groupItems.map((problem, idx) => (
                   <ProblemRow
                     key={problem.id}
                     problem={problem}
@@ -155,14 +192,21 @@ export function ProblemList({
             </div>
           );
         })}
+        {visibleCount < problems.length && (
+          <div ref={sentinelRef} className="py-3 text-center text-xs font-pretty-mono text-gray-500 bg-[#121316]/40">
+            Rendering {visibleCount} of {problems.length} problems...
+          </div>
+        )}
       </div>
     );
   }
 
   // Continuous Stream View (Default)
+  const visibleProblems = problems.length <= PROBLEM_CHUNK_SIZE ? problems : problems.slice(0, visibleCount);
+
   return (
     <div className="flex-1 divide-y divide-[#202125] bg-[#141518]">
-      {problems.map((problem, index) => (
+      {visibleProblems.map((problem, index) => (
         <ProblemRow
           key={problem.id}
           problem={problem}
@@ -173,6 +217,11 @@ export function ProblemList({
           onSaveNotes={onSaveNotes}
         />
       ))}
+      {visibleCount < problems.length && (
+        <div ref={sentinelRef} className="py-3 text-center text-xs font-pretty-mono text-gray-500 bg-[#121316]/40">
+          Rendering {visibleCount} of {problems.length} problems...
+        </div>
+      )}
     </div>
   );
 }
