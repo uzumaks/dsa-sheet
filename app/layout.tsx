@@ -41,6 +41,9 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
+  alternates: {
+    canonical: siteUrl,
+  },
   icons: {
     icon: [
       { url: "/icon.png", sizes: "512x512", type: "image/png" },
@@ -56,14 +59,21 @@ export const metadata: Metadata = {
     description:
       "Explore DSA patterns and company-wise interview questions. Filter by topic and difficulty, track solved problems, save notes, and build a consistent interview preparation routine.",
     siteName: "DSASheeeet",
-    url: "/",
+    url: siteUrl,
     images: [
       {
-        url: "/og-image.png",
+        url: `${siteUrl}/og-image.png`,
         width: 1200,
         height: 630,
         type: "image/png",
         alt: "DSASheeeet | Your DSA Practice Workspace (41 Patterns, 423 Companies)",
+      },
+      {
+        url: `${siteUrl}/og-banner.png`,
+        width: 1200,
+        height: 630,
+        type: "image/png",
+        alt: "DSASheeeet Platform Banner",
       },
     ],
     locale: "en_US",
@@ -74,8 +84,9 @@ export const metadata: Metadata = {
     title: "DSASheeeet | Your DSA Practice Workspace",
     description:
       "Explore DSA patterns and company-wise interview questions. Filter by topic and difficulty, track solved problems, save notes, and build a consistent interview preparation routine.",
-    images: ["/og-image.png"],
+    images: [`${siteUrl}/og-image.png`],
     creator: "@dsasheeeet",
+    site: "@dsasheeeet",
   },
   robots: {
     index: true,
@@ -101,13 +112,16 @@ export default function RootLayout({
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="icon" href="/icon.png" type="image/png" sizes="512x512" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-        <meta property="og:image" content="/og-image.png" />
-        <meta property="og:image:secure_url" content="/og-image.png" />
+        <meta property="og:image" content="https://dsasheeeet.vercel.app/og-image.png" />
+        <meta property="og:image:secure_url" content="https://dsasheeeet.vercel.app/og-image.png" />
         <meta property="og:image:type" content="image/png" />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content="DSASheeeet | Your DSA Practice Workspace (41 Patterns, 423 Companies)" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:image" content="/og-image.png" />
+        <meta name="twitter:site" content="@dsasheeeet" />
+        <meta name="twitter:creator" content="@dsasheeeet" />
+        <meta name="twitter:image" content="https://dsasheeeet.vercel.app/og-image.png" />
       </head>
       <body className="bg-[#101113] text-[#F3F4F6] min-h-screen antialiased selection:bg-emerald-900/40 selection:text-emerald-200">
         {children}
