@@ -16,15 +16,15 @@ interface ProblemRowProps {
 
 const difficultyStyles: Record<Difficulty, { tag: string; label: string }> = {
   easy: {
-    tag: 'bg-emerald-950/60 text-emerald-400 border border-emerald-800/40',
+    tag: 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20',
     label: 'Easy',
   },
   medium: {
-    tag: 'bg-amber-950/60 text-amber-400 border border-amber-800/40',
+    tag: 'bg-amber-500/10 text-amber-400 border border-amber-500/20',
     label: 'Medium',
   },
   hard: {
-    tag: 'bg-red-950/60 text-red-400 border border-red-800/40',
+    tag: 'bg-rose-500/10 text-rose-400 border border-rose-500/20',
     label: 'Hard',
   },
 };
@@ -43,33 +43,33 @@ export function ProblemRow({
 
   return (
     <div
-      className={`group transition-colors border-b border-[#202125] ${
-        problem.completed ? 'bg-[#121316]/60' : 'bg-[#17181B] hover:bg-[#1B1C20]'
+      className={`group transition-colors border-b border-[#202125] font-pretty ${
+        problem.completed ? 'bg-[#121316]/60' : 'bg-[#141518] hover:bg-[#18191E]'
       }`}
     >
       <div className="flex items-center justify-between gap-3 px-3.5 sm:px-6 py-2.5 sm:py-3 min-h-[48px]">
-        {/* 1. Completion Checkbox & 2. Continuous Serial Number & 3. Problem Title */}
+        {/* Checkbox & Serial Number & Title */}
         <div className="flex items-center gap-3 sm:gap-3.5 min-w-0 flex-1">
-          {/* 1. Completion Checkbox */}
+          {/* Completion Checkbox */}
           <button
             type="button"
             onClick={(e) => {
               e.stopPropagation();
               onToggleComplete(problem.id);
             }}
-            className={`w-4.5 h-4.5 sm:w-5 sm:h-5 rounded shrink-0 flex items-center justify-center transition-all cursor-pointer ${
+            className={`w-5 h-5 rounded-[5px] shrink-0 flex items-center justify-center transition-all cursor-pointer ${
               problem.completed
-                ? 'bg-emerald-600/90 text-black border border-emerald-500'
-                : 'bg-[#111214] border border-[#383A40] hover:border-emerald-500/70 text-transparent'
+                ? 'bg-emerald-500 text-[#101113] border border-emerald-500 shadow-xs'
+                : 'bg-[#17181B] border border-[#2D3036] hover:border-emerald-500/60 text-transparent'
             }`}
             aria-label={problem.completed ? 'Mark incomplete' : 'Mark completed'}
           >
-            <Check className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[3]" />
+            <Check className="w-3.5 h-3.5 stroke-[2.5]" />
           </button>
 
-          {/* 2. Continuous Serial Number & 3. Problem Title */}
+          {/* Serial Number & Title */}
           <div className="min-w-0 flex-1 flex items-center gap-2">
-            <span className="text-gray-500 text-xs sm:text-sm font-mono shrink-0 select-none">
+            <span className="text-gray-500 text-xs sm:text-sm font-pretty-mono font-[300] shrink-0 select-none">
               {visualNumber}.
             </span>
 
@@ -78,10 +78,10 @@ export function ProblemRow({
                 href={problem.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`text-[13px] sm:text-[14px] md:text-[15px] font-normal truncate transition-colors group-hover:text-white leading-normal ${
+                className={`text-[13.5px] sm:text-[14.5px] font-normal tracking-normal truncate transition-colors leading-normal ${
                   problem.completed
-                    ? 'text-gray-400 line-through decoration-gray-500/60 hover:text-gray-200'
-                    : 'text-gray-200 hover:text-emerald-400 hover:underline'
+                    ? 'text-gray-500 line-through decoration-gray-600 hover:text-gray-300'
+                    : 'text-gray-100 hover:text-emerald-400'
                 }`}
                 title={`Open "${problem.title}" on LeetCode`}
               >
@@ -89,8 +89,8 @@ export function ProblemRow({
               </a>
             ) : (
               <span
-                className={`text-[13px] sm:text-[14px] md:text-[15px] truncate leading-normal ${
-                  problem.completed ? 'text-gray-400 line-through' : 'text-gray-200'
+                className={`text-[13.5px] sm:text-[14.5px] font-normal tracking-normal truncate leading-normal ${
+                  problem.completed ? 'text-gray-500 line-through' : 'text-gray-100'
                 }`}
               >
                 {problem.title}
@@ -106,17 +106,17 @@ export function ProblemRow({
                 title="Open LeetCode problem in new tab"
                 aria-label="Open LeetCode problem"
               >
-                <ExternalLink className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                <ExternalLink className="w-3.5 h-3.5 stroke-[1.5]" />
               </a>
             )}
           </div>
         </div>
 
-        {/* 4. Difficulty Tag & 5. Plus/Notes Button */}
+        {/* Difficulty Tag & Notes Button */}
         <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
           {/* Difficulty Badge */}
           <span
-            className={`text-[11px] sm:text-xs font-medium px-2 sm:px-2.5 py-0.5 rounded-full uppercase tracking-wider ${diff.tag}`}
+            className={`text-[10px] sm:text-[11px] font-pretty-mono font-[300] px-2 sm:px-2.5 py-0.5 rounded border ${diff.tag}`}
           >
             {diff.label}
           </span>
@@ -130,22 +130,22 @@ export function ProblemRow({
             }}
             className={`relative p-1.5 rounded-md text-xs sm:text-sm transition-colors flex items-center justify-center cursor-pointer ${
               isNotesExpanded
-                ? 'bg-[#292A2E] text-emerald-400'
+                ? 'bg-[#25272C] text-emerald-400'
                 : hasNotes
-                ? 'text-emerald-400/90 hover:bg-[#25272C]'
-                : 'text-gray-400 hover:text-gray-200 hover:bg-[#25272C]'
+                ? 'text-emerald-400/90 hover:bg-[#1F2024]'
+                : 'text-gray-500 hover:text-gray-200 hover:bg-[#1F2024]'
             }`}
             title={isNotesExpanded ? 'Collapse notes' : hasNotes ? 'View notes' : 'Add notes'}
             aria-label="Toggle notes"
           >
             {isNotesExpanded ? (
-              <Minus className="w-4 h-4" />
+              <Minus className="w-4 h-4 stroke-[1.5]" />
             ) : (
-              <Plus className="w-4 h-4" />
+              <Plus className="w-4 h-4 stroke-[1.5]" />
             )}
             {/* Subtle dot if notes exist and not expanded */}
             {hasNotes && !isNotesExpanded && (
-              <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-emerald-400 ring-2 ring-[#17181B]" />
+              <span className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 rounded-full bg-emerald-400 ring-2 ring-[#17181B]" />
             )}
           </button>
         </div>

@@ -59,19 +59,19 @@ export function CustomSortDropdown({ sort, onSortChange }: CustomSortDropdownPro
   }, [isOpen]);
 
   return (
-    <div className="relative inline-block text-left" ref={containerRef}>
+    <div className="relative inline-block text-left font-pretty" ref={containerRef}>
       {/* Trigger Button */}
       <button
         type="button"
         onClick={() => setIsOpen((prev) => !prev)}
-        className="h-7.5 px-2.5 rounded-md text-xs font-medium flex items-center justify-between gap-1.5 bg-[#17181B] border border-[#292A2E] hover:border-[#3E4148] text-gray-300 transition-all cursor-pointer select-none"
+        className="h-7.5 px-2.5 rounded-md text-xs font-[300] flex items-center justify-between gap-1.5 bg-[#17181B] border border-[#25272C] hover:border-[#383A40] text-gray-300 transition-all cursor-pointer select-none"
         aria-haspopup="listbox"
         aria-expanded={isOpen}
       >
-        <ArrowUpDown className="w-3 h-3 text-gray-500 shrink-0" />
+        <ArrowUpDown className="w-3 h-3 text-gray-500 shrink-0 stroke-[1.5]" />
         <span className="truncate">{currentLabel}</span>
         <ChevronDown
-          className={`w-3 h-3 text-gray-400 shrink-0 transition-transform duration-150 ${
+          className={`w-3 h-3 text-gray-500 shrink-0 stroke-[1.5] transition-transform duration-150 ${
             isOpen ? 'rotate-180' : ''
           }`}
         />
@@ -79,7 +79,7 @@ export function CustomSortDropdown({ sort, onSortChange }: CustomSortDropdownPro
 
       {/* Popover Menu */}
       {isOpen && (
-        <div className="absolute right-0 top-full mt-1.5 z-50 w-44 bg-[#17181B] border border-[#292A2E] rounded-md shadow-2xl p-1 text-xs select-none">
+        <div className="absolute right-0 top-full mt-1.5 z-50 w-44 bg-[#17181B] border border-[#25272C] rounded-xl shadow-2xl p-1 text-xs select-none">
           {sortOptionsList.map((opt) => {
             const isSelected = sort === opt.value;
             return (
@@ -90,14 +90,14 @@ export function CustomSortDropdown({ sort, onSortChange }: CustomSortDropdownPro
                   onSortChange(opt.value);
                   setIsOpen(false);
                 }}
-                className={`w-full text-left px-2.5 py-1.5 rounded flex items-center justify-between transition-colors cursor-pointer ${
+                className={`w-full text-left px-2.5 py-1.5 rounded-md flex items-center justify-between transition-colors cursor-pointer ${
                   isSelected
-                    ? 'bg-[#25272D] text-emerald-400 font-medium'
-                    : 'text-gray-300 hover:bg-[#25272D] hover:text-white'
+                    ? 'bg-[#25272C] text-emerald-400 font-[400]'
+                    : 'text-gray-300 hover:bg-[#25272C] hover:text-white font-[300]'
                 }`}
               >
                 <span>{opt.label}</span>
-                {isSelected && <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0" />}
+                {isSelected && <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0 stroke-[2]" />}
               </button>
             );
           })}

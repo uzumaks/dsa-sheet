@@ -4,9 +4,9 @@ import React from "react";
 
 export function AppSkeleton() {
   return (
-    <div className="h-screen w-full bg-[#101113] text-gray-100 flex flex-col overflow-hidden select-none animate-pulse">
+    <div className="h-screen w-full bg-[#101113] text-gray-100 flex flex-col overflow-hidden select-none animate-pulse font-pretty">
       {/* 1. Header Skeleton */}
-      <header className="sticky top-0 z-30 w-full bg-[#101113]/90 backdrop-blur-md border-b border-[#292A2E] px-4 sm:px-6 lg:px-8 2xl:px-12 py-2.5">
+      <header className="sticky top-0 z-30 w-full bg-[#101113]/90 backdrop-blur-md border-b border-[#25272C] px-4 sm:px-6 lg:px-8 2xl:px-12 py-2.5">
         <div className="w-full max-w-[1920px] mx-auto flex flex-col md:flex-row items-center justify-between gap-2.5 md:gap-4">
           {/* Logo & Brand & Progress */}
           <div className="flex items-center gap-3 sm:gap-4 w-full md:w-auto justify-between md:justify-start">
@@ -36,7 +36,7 @@ export function AppSkeleton() {
       {/* 2. Main Body Skeleton: Sidebar + Content */}
       <div className="flex-1 min-h-0 flex flex-col lg:flex-row w-full max-w-[1920px] mx-auto overflow-hidden">
         {/* Desktop Sidebar Skeleton */}
-        <div className="hidden lg:flex shrink-0 w-72 xl:w-80 2xl:w-96 h-full flex-col bg-[#101113] border-r border-[#292A2E] p-3.5 space-y-2">
+        <div className="hidden lg:flex shrink-0 w-72 xl:w-80 2xl:w-96 h-full flex-col bg-[#101113] border-r border-[#25272C] p-3.5 space-y-2">
           {/* Sidebar Top Search */}
           <div className="h-8 w-full bg-[#17181B] border border-[#25272C] rounded-md mb-2" />
           

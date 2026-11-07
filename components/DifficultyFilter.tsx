@@ -31,17 +31,17 @@ export function DifficultyFilter({
   onTopicChange,
 }: DifficultyFilterProps) {
   return (
-    <div className="flex flex-wrap lg:flex-nowrap items-center justify-between gap-2.5 py-2 px-3.5 sm:px-6 bg-[#141518] border-b border-[#292A2E] text-xs">
+    <div className="flex flex-wrap lg:flex-nowrap items-center justify-between gap-2.5 py-2 px-3.5 sm:px-6 bg-[#141518] border-b border-[#25272C] text-xs font-pretty">
       {/* Left side: Difficulty Pills + Custom Topic Dropdown */}
       <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
         {/* Difficulty Buttons */}
-        <div className="flex items-center gap-0.5 bg-[#17181B] border border-[#292A2E] rounded-md p-0.5 h-7.5">
+        <div className="flex items-center gap-0.5 bg-[#17181B] border border-[#25272C] rounded-md p-0.5 h-7.5">
           <button
             type="button"
             onClick={() => onDifficultyChange('all')}
-            className={`px-2.5 h-full rounded font-medium transition-colors cursor-pointer select-none ${
+            className={`px-2.5 h-full rounded font-[300] transition-colors cursor-pointer select-none ${
               difficulty === 'all'
-                ? 'bg-[#25272D] text-gray-100'
+                ? 'bg-[#25272C] text-gray-100 font-[400]'
                 : 'text-gray-400 hover:text-gray-200'
             }`}
           >
@@ -50,9 +50,9 @@ export function DifficultyFilter({
           <button
             type="button"
             onClick={() => onDifficultyChange('easy')}
-            className={`flex items-center gap-1.5 px-2.5 h-full rounded font-medium transition-colors cursor-pointer select-none ${
+            className={`flex items-center gap-1.5 px-2.5 h-full rounded font-[300] transition-colors cursor-pointer select-none ${
               difficulty === 'easy'
-                ? 'bg-emerald-950/70 text-emerald-300 border border-emerald-800/60'
+                ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-[400]'
                 : 'text-gray-400 hover:text-emerald-400'
             }`}
           >
@@ -62,9 +62,9 @@ export function DifficultyFilter({
           <button
             type="button"
             onClick={() => onDifficultyChange('medium')}
-            className={`flex items-center gap-1.5 px-2.5 h-full rounded font-medium transition-colors cursor-pointer select-none ${
+            className={`flex items-center gap-1.5 px-2.5 h-full rounded font-[300] transition-colors cursor-pointer select-none ${
               difficulty === 'medium'
-                ? 'bg-amber-950/70 text-amber-300 border border-amber-800/60'
+                ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20 font-[400]'
                 : 'text-gray-400 hover:text-amber-400'
             }`}
           >
@@ -74,13 +74,13 @@ export function DifficultyFilter({
           <button
             type="button"
             onClick={() => onDifficultyChange('hard')}
-            className={`flex items-center gap-1.5 px-2.5 h-full rounded font-medium transition-colors cursor-pointer select-none ${
+            className={`flex items-center gap-1.5 px-2.5 h-full rounded font-[300] transition-colors cursor-pointer select-none ${
               difficulty === 'hard'
-                ? 'bg-red-950/70 text-red-300 border border-red-800/60'
-                : 'text-gray-400 hover:text-red-400'
+                ? 'bg-rose-500/10 text-rose-400 border border-rose-500/20 font-[400]'
+                : 'text-gray-400 hover:text-rose-400'
             }`}
           >
-            <span className="w-1.5 h-1.5 rounded-full bg-red-400" />
+            <span className="w-1.5 h-1.5 rounded-full bg-rose-400" />
             <span>Hard</span>
           </button>
         </div>
@@ -98,13 +98,13 @@ export function DifficultyFilter({
       {/* Right side: Status Filter + Custom Sort Dropdown + Count */}
       <div className="flex items-center gap-2 shrink-0">
         {/* Status Filter */}
-        <div className="flex items-center gap-0.5 bg-[#17181B] border border-[#292A2E] rounded-md p-0.5 h-7.5">
+        <div className="flex items-center gap-0.5 bg-[#17181B] border border-[#25272C] rounded-md p-0.5 h-7.5">
           <button
             type="button"
             onClick={() => onStatusChange('all')}
-            className={`px-2.5 h-full rounded font-medium transition-colors cursor-pointer select-none ${
+            className={`px-2.5 h-full rounded font-[300] transition-colors cursor-pointer select-none ${
               status === 'all'
-                ? 'bg-[#25272D] text-gray-200'
+                ? 'bg-[#25272C] text-gray-200 font-[400]'
                 : 'text-gray-400 hover:text-gray-200'
             }`}
           >
@@ -113,9 +113,9 @@ export function DifficultyFilter({
           <button
             type="button"
             onClick={() => onStatusChange('incomplete')}
-            className={`px-2.5 h-full rounded font-medium transition-colors cursor-pointer select-none ${
+            className={`px-2.5 h-full rounded font-[300] transition-colors cursor-pointer select-none ${
               status === 'incomplete'
-                ? 'bg-[#25272D] text-gray-200'
+                ? 'bg-[#25272C] text-gray-200 font-[400]'
                 : 'text-gray-400 hover:text-gray-200'
             }`}
           >
@@ -124,9 +124,9 @@ export function DifficultyFilter({
           <button
             type="button"
             onClick={() => onStatusChange('completed')}
-            className={`px-2.5 h-full rounded font-medium transition-colors cursor-pointer select-none ${
+            className={`px-2.5 h-full rounded font-[300] transition-colors cursor-pointer select-none ${
               status === 'completed'
-                ? 'bg-[#25272D] text-emerald-400'
+                ? 'bg-[#25272C] text-emerald-400 font-[400]'
                 : 'text-gray-400 hover:text-gray-200'
             }`}
           >
@@ -138,7 +138,7 @@ export function DifficultyFilter({
         <CustomSortDropdown sort={sort} onSortChange={onSortChange} />
 
         {/* Total Shown Count */}
-        <span className="text-xs text-gray-500 tabular-nums font-mono pl-1">
+        <span className="text-xs text-gray-500 tabular-nums font-pretty-mono font-[300] pl-1">
           ({totalShown})
         </span>
       </div>

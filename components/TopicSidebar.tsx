@@ -40,25 +40,25 @@ export function TopicSidebar({
   }, [mode, companies, searchQuery]);
 
   return (
-    <aside className="w-full h-full min-h-0 flex flex-col bg-[#101113] border-b lg:border-b-0 lg:border-r border-[#292A2E] overflow-hidden select-none">
+    <aside className="w-full h-full min-h-0 flex flex-col bg-[#101113] border-b lg:border-b-0 lg:border-r border-[#25272C] overflow-hidden select-none">
       {/* Sidebar Header */}
-      <div className="shrink-0 px-4 py-3.5 border-b border-[#292A2E] flex items-center justify-between bg-[#101113]">
-        <span className="text-xs sm:text-[13px] font-semibold tracking-wider text-gray-400 uppercase">
-          {mode === 'topic' ? 'Patterns & Topics' : 'Companies'}
+      <div className="shrink-0 px-4 py-3 border-b border-[#25272C] flex items-center justify-between bg-[#101113]">
+        <span className="text-xs font-pretty-mono font-[300] tracking-widest text-emerald-400/90 uppercase">
+          {mode === 'topic' ? '41 Patterns' : '423 Companies'}
         </span>
-        <span className="text-xs text-gray-500 font-mono">
-          {mode === 'topic' ? `${topics.length} total` : `${filteredCompanies.length} total`}
+        <span className="text-xs font-pretty-mono font-[300] text-gray-500">
+          {mode === 'topic' ? `${topics.length} total` : `${filteredCompanies.length} shown`}
         </span>
       </div>
 
       {/* Navigation List: Independent Scroll Container */}
       <div
-        className={`flex-1 min-h-0 overflow-y-auto p-2 sm:p-2.5 flex flex-col gap-1 sm:gap-1.5 overscroll-contain ${
+        className={`flex-1 min-h-0 overflow-y-auto p-2 sm:p-2.5 flex flex-col gap-1 overscroll-contain ${
           mode === 'company' ? 'company-scrollbar' : 'custom-scrollbar'
         }`}
       >
         {mode === 'topic' ? (
-          // Topic Wise Mode
+          // Topic / Pattern Wise Mode
           topics.map((topic) => {
             const isSelected = selectedTopicId === topic.id;
             const stats = topicStats.get(topic.id) || { completed: 0, total: 0 };
@@ -72,29 +72,29 @@ export function TopicSidebar({
                   onSelectTopic(topic.id);
                   onCloseMobile?.();
                 }}
-                className={`w-full text-left flex items-center justify-between px-3 sm:px-3.5 py-2 sm:py-2.5 rounded-md cursor-pointer transition-all whitespace-nowrap lg:whitespace-normal ${
+                className={`w-full text-left flex items-center justify-between px-3 py-2 rounded-lg cursor-pointer transition-all whitespace-nowrap lg:whitespace-normal ${
                   isSelected
-                    ? 'bg-[#17181B] text-gray-100 font-medium border border-[#292A2E]'
-                    : 'text-gray-400 hover:text-gray-200 hover:bg-[#17181B]/60 border border-transparent'
+                    ? 'bg-[#17181B] text-gray-100 font-[400] border border-[#292A2E] shadow-xs'
+                    : 'text-gray-400 hover:text-gray-200 hover:bg-[#17181B]/70 border border-transparent font-[300]'
                 }`}
               >
                 <div className="flex items-center gap-2 overflow-hidden mr-2">
-                  <span className="text-xs sm:text-sm truncate">
-                    <span className="text-gray-500 text-xs font-mono mr-1.5">
-                      {topic.order}.
-                    </span>
+                  <span className="text-gray-500 text-xs font-pretty-mono font-[300] shrink-0">
+                    {topic.order}.
+                  </span>
+                  <span className="text-xs sm:text-[13px] font-normal tracking-normal truncate text-gray-200 group-hover:text-white">
                     {topic.name}
                   </span>
                 </div>
 
                 <div className="flex items-center gap-1.5 shrink-0">
                   <span
-                    className={`text-xs sm:text-sm tabular-nums font-mono ${
+                    className={`text-xs tabular-nums font-pretty-mono font-[300] ${
                       isAllCompleted
-                        ? 'text-emerald-400 font-medium'
+                        ? 'text-emerald-400'
                         : isSelected
                         ? 'text-gray-300'
-                        : 'text-gray-500'
+                        : 'text-gray-600'
                     }`}
                   >
                     {stats.completed}/{stats.total}
@@ -121,29 +121,29 @@ export function TopicSidebar({
                   onSelectCompany(company.id);
                   onCloseMobile?.();
                 }}
-                className={`w-full text-left flex items-center justify-between px-3 sm:px-3.5 py-2 sm:py-2.5 rounded-md cursor-pointer transition-all whitespace-nowrap lg:whitespace-normal ${
+                className={`w-full text-left flex items-center justify-between px-3 py-2 rounded-lg cursor-pointer transition-all whitespace-nowrap lg:whitespace-normal ${
                   isSelected
-                    ? 'bg-[#17181B] text-gray-100 font-medium border border-[#292A2E]'
-                    : 'text-gray-400 hover:text-gray-200 hover:bg-[#17181B]/60 border border-transparent'
+                    ? 'bg-[#17181B] text-gray-100 font-[400] border border-[#292A2E] shadow-xs'
+                    : 'text-gray-400 hover:text-gray-200 hover:bg-[#17181B]/70 border border-transparent font-[300]'
                 }`}
               >
                 <div className="flex items-center gap-2 overflow-hidden mr-2">
-                  <span className="text-xs sm:text-sm truncate">
-                    <span className="text-gray-500 text-xs font-mono mr-1.5">
-                      {index + 1}.
-                    </span>
+                  <span className="text-gray-500 text-xs font-pretty-mono font-[300] shrink-0">
+                    {index + 1}.
+                  </span>
+                  <span className="text-xs sm:text-[13px] font-normal tracking-normal truncate text-gray-200 group-hover:text-white">
                     {company.name}
                   </span>
                 </div>
 
                 <div className="flex items-center gap-1.5 shrink-0">
                   <span
-                    className={`text-xs sm:text-sm tabular-nums font-mono ${
+                    className={`text-xs tabular-nums font-pretty-mono font-[300] ${
                       isAllCompleted
-                        ? 'text-emerald-400 font-medium'
+                        ? 'text-emerald-400'
                         : isSelected
                         ? 'text-gray-300'
-                        : 'text-gray-500'
+                        : 'text-gray-600'
                     }`}
                   >
                     {stats.completed}/{company.totalCount}

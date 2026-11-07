@@ -463,7 +463,7 @@ export default function LandingPage() {
                                   #{prob.number}
                                 </span>
                                 <span
-                                  className={`text-sm 2xl:text-base font-[300] tracking-normal transition-colors ${
+                                  className={`text-sm 2xl:text-base font-normal tracking-normal transition-colors ${
                                     prob.solved
                                       ? "text-gray-400 line-through"
                                       : "text-gray-100"
@@ -577,7 +577,7 @@ export default function LandingPage() {
                       }`}
                     >
                       <div className="flex items-center justify-between mb-1">
-                        <span className="font-[300] text-sm 2xl:text-base text-gray-100 tracking-wide">
+                        <span className="font-normal text-sm 2xl:text-base text-gray-100 tracking-wide">
                           {pat.name}
                         </span>
                         <span
@@ -610,7 +610,7 @@ export default function LandingPage() {
                       <span className="text-xs 2xl:text-sm font-pretty-mono font-[300] text-emerald-400 uppercase tracking-widest">
                         Pattern Blueprint #{activePatternIndex + 1}
                       </span>
-                      <h3 className="text-xl sm:text-2xl 2xl:text-3xl font-[200] text-gray-100 tracking-tight mt-1">
+                      <h3 className="text-xl sm:text-2xl 2xl:text-3xl font-normal text-gray-100 tracking-tight mt-1">
                         {PATTERN_MATRIX[activePatternIndex].name}
                       </h3>
                     </div>
@@ -643,7 +643,7 @@ export default function LandingPage() {
                       <div className="flex items-center gap-3 2xl:gap-4">
                         <Code2 className="w-5 h-5 2xl:w-6 2xl:h-6 text-emerald-400 stroke-[1.5] shrink-0" />
                         <div>
-                          <div className="text-sm 2xl:text-base font-[300] text-gray-200">
+                          <div className="text-sm 2xl:text-base font-normal text-gray-200">
                             {PATTERN_MATRIX[activePatternIndex].canonical}
                           </div>
                           <div className="text-xs 2xl:text-sm text-gray-500 font-pretty-mono font-[300] mt-0.5">
@@ -731,7 +731,7 @@ export default function LandingPage() {
                           <div className="w-8 h-8 2xl:w-9 2xl:h-9 rounded-md bg-[#1F2024] border border-[#25272C] flex items-center justify-center font-pretty-mono font-[300] text-xs 2xl:text-sm text-gray-300 group-hover:border-emerald-500/40">
                             {comp.name.substring(0, 2).toUpperCase()}
                           </div>
-                          <h3 className="font-[300] text-base 2xl:text-lg text-gray-100 tracking-wide">
+                          <h3 className="font-normal text-base 2xl:text-lg text-gray-100 tracking-wide">
                             {comp.name}
                           </h3>
                         </div>
