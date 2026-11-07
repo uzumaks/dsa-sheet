@@ -9,7 +9,7 @@ export const viewport: Viewport = {
   maximumScale: 5,
 };
 
-const siteUrl = "https://dsasheeeet.vercel.app";
+const siteUrl = "https://dsasheeeet.vercel.app/home";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -112,16 +112,28 @@ export default function RootLayout({
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="icon" href="/icon.png" type="image/png" sizes="512x512" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-        <meta property="og:image" content="https://dsasheeeet.vercel.app/og-image.png" />
-        <meta property="og:image:secure_url" content="https://dsasheeeet.vercel.app/og-image.png" />
+        <meta
+          property="og:image"
+          content="https://dsasheeeet.vercel.app/home/og-image.png"
+        />
+        <meta
+          property="og:image:secure_url"
+          content="https://dsasheeeet.vercel.app/home/og-image.png"
+        />
         <meta property="og:image:type" content="image/png" />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
-        <meta property="og:image:alt" content="DSASheeeet | Your DSA Practice Workspace (41 Patterns, 423 Companies)" />
+        <meta
+          property="og:image:alt"
+          content="DSASheeeet | Your DSA Practice Workspace (41 Patterns, 423 Companies)"
+        />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:site" content="@dsasheeeet" />
         <meta name="twitter:creator" content="@dsasheeeet" />
-        <meta name="twitter:image" content="https://dsasheeeet.vercel.app/og-image.png" />
+        <meta
+          name="twitter:image"
+          content="https://dsasheeeet.vercel.app/home/og-image.png"
+        />
       </head>
       <body className="bg-[#101113] text-[#F3F4F6] min-h-screen antialiased selection:bg-emerald-900/40 selection:text-emerald-200">
         {children}
